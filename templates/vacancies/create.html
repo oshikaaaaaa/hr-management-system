@@ -1,0 +1,50 @@
+{% extends "./base_create.html" %}
+
+{% block title %}Create New Vacancy - HR Management System{% endblock %}
+
+{% block content %}
+        <h1>Create New Vacancy</h1>
+        
+        <form action="/vacancies/create" method="POST">
+            <div class="form-group">
+                <label for="department_id">Department</label>
+                <input type="number" id="department_id" name="department_id" required>
+            </div>
+
+            <div class="form-group">
+                <label for="position_id">Position</label>
+                <input type="number" id="position_id" name="position_id" required>
+            </div>
+
+            <div class="form-group">
+                <label for="position_title">Position Title</label>
+                <input type="text" id="position_title" name="position_title" required>
+            </div>
+
+            <div class="form-group">
+                <label for="job_description">Job Description</label>
+                <textarea id="job_description" name="job_description" rows="4" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="required_skills">Required Skills</label>
+                <textarea id="required_skills" name="required_skills" rows="4" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="open_date">Opening Date</label>
+                <input type="date" id="open_date" name="open_date" required>
+            </div>
+
+            <div class="form-group">
+                <label for="is_open">Is Open</label>
+                <input type="checkbox" id="is_open" name="is_open" checked>
+            </div>
+
+            <div class="form-actions">
+                <a href="/vacancies" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Create Vacancy</button>
+            </div>
+        </form>
+
+{% endblock %}

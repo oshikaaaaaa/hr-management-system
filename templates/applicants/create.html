@@ -1,0 +1,40 @@
+{% extends "./base_create.html" %}
+
+{% block title %}Create New Applicant - HR Management System{% endblock %}
+
+{% block content %}
+        <h1>Create New Applicant</h1>
+        
+        <form action="/applicants/create" method="POST">
+            <div class="form-group">
+                <label for="full_name">Full Name</label>
+                <input type="text" id="full_name" name="full_name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="contact_number">Contact Number</label>
+                <input type="tel" id="contact_number" name="contact_number" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="vacancy_id">Vacancy ID</label>
+                <input type="number" id="vacancy_id" name="vacancy_id" required>
+            </div>
+
+            <div class="form-group">
+                <label for="resume_url">Resume URL</label>
+                <input type="url" id="resume_url" name="resume_url" required>
+            </div>
+
+            <div class="form-actions">
+                <a href="/applicants" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Create Applicant</button>
+            </div>
+        </form>
+
+{% endblock %}

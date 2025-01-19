@@ -16,6 +16,8 @@ from sqlalchemy import create_engine, Table, MetaData, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi.responses import HTMLResponse, RedirectResponse
+from sqlalchemy import Column, Integer, ForeignKey, DateTime, String
+import datetime
 import bcrypt  # Import bcrypt for password hashing
 # Database setup
 SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:Cooperation322060#@localhost:3306/management_system"
@@ -44,7 +46,38 @@ class LeaveStatus(str, enum.Enum):
     Approved = "Approved"
     Rejected = "Rejected"
 
+
+class ApplicationStatus(str, enum.Enum):
+    PENDING = "Pending"
+    SHORTLISTED = "Shortlisted"
+    INTERVIEWED = "Interviewed"
+    HIRED = "Hired"
+    REJECTED = "Rejected"
+
+
+class InterviewStatus(str, enum.Enum):
+    PENDING = "Pending"
+    COMPLETED= "Completed"
+    RESCHEDULED = "Rescheduled"
+    CANCELLED= "Cancelled"
+    
+
+
+    # interview_status = Column(String)  # Could be enum: Pending, Completed, Rescheduled, Cancelled
+
 # Models
+
+# Additional Models
+class User(Base):
+    __tablename__ = "users"
+    
+    user_id = Column(Integer, primary_key=True, index=True)
+    username = Column(String(255), unique=True)
+    password = Column(String(255))
+    is_admin = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.datetime.now())
+    last_login = Column(DateTime)
+
 class Employee(Base):
     __tablename__ = "employees"
     
@@ -80,6 +113,71 @@ class Position(Base):
     description = Column(Text)
     required_skills = Column(Text)
 
+
+class Leave(Base):
+    __tablename__ = "leaves"
+    
+    leave_id = Column(Integer, primary_key=True, index=True)
+    employee_id = Column(Integer, ForeignKey("employees.employee_id"))
+    start_date = Column(Date)
+    end_date = Column(Date)
+    is_paid = Column(Boolean)
+    status = Column(Enum(LeaveStatus))
+    purpose = Column(String(255))
+
+class LeaveBalance(Base):
+    __tablename__ = "leave_balances"
+    
+    balance_id = Column(Integer, primary_key=True, index=True)
+    employee_id = Column(Integer, ForeignKey("employees.employee_id"))
+    paid_leave_balance = Column(Integer)
+    unpaid_leave_balance = Column(Integer)
+
+class Payment(Base):
+    __tablename__ = "payments"
+    
+    payment_id = Column(Integer, primary_key=True, index=True)
+    employee_id = Column(Integer, ForeignKey("employees.employee_id"))
+    pending_salary = Column(DECIMAL(10, 2))
+    last_payment_date = Column(Date)
+    appraisal_date = Column(Date)
+    adjustments = Column(DECIMAL(10, 2))
+
+class Applicant(Base):
+    __tablename__ = "applicants"
+    
+    applicant_id = Column(Integer, primary_key=True, index=True)
+    full_name = Column(String(100))
+    contact_number = Column(String(15))
+    email = Column(String(100))
+    vacancy_id = Column(Integer, ForeignKey("vacancies.vacancy_id"))
+    status = Column(Enum(ApplicationStatus))  # Could be enum: Pending, Shortlisted, Interviewed, Hired, Rejected
+    resume_url = Column(String(255))
+    application_date = Column(Date)
+
+
+class Interview(Base):
+    __tablename__ = "interviews"
+    
+    interview_id = Column(Integer, primary_key=True, index=True)
+    applicant_id = Column(Integer, ForeignKey("applicants.applicant_id"))
+    interview_date = Column(Date)
+    interview_time = Column(Time)
+    interview_status = Column(Enum(InterviewStatus))  # Could be enum: Pending, Completed, Rescheduled, Cancelled
+    interviewed_by = Column(Integer, ForeignKey("users.user_id"))
+    interview_notes = Column(Text)
+
+class Vacancy(Base):
+    __tablename__ = "vacancies"
+    
+    vacancy_id = Column(Integer, primary_key=True, index=True)
+    department_id = Column(Integer, ForeignKey("departments.department_id"))
+    position_id = Column(Integer, ForeignKey("positions.position_id"))
+    position_title = Column(String(100))
+    job_description = Column(Text)
+    required_skills = Column(Text)
+    open_date = Column(Date)
+    is_open = Column(Boolean, default=True)
 # Create tables
 Base.metadata.create_all(bind=engine)
 
@@ -392,3 +490,192 @@ async def delete_position(position_id: int, db: Session = Depends(get_db)):
     db.delete(position)
     db.commit()
     return RedirectResponse(url="/positions", status_code=303)
+
+
+@app.get("/leaves", response_class=HTMLResponse)
+async def list_leaves(request: Request, db: Session = Depends(get_db)):
+    leaves = db.query(Leave).all()
+    return templates.TemplateResponse(
+        "leaves/list.html",
+        {"request": request, "leaves": leaves}
+    )
+
+@app.get("/leaves/create", response_class=HTMLResponse)
+async def create_leave_form(request: Request):
+    return templates.TemplateResponse(
+        "leaves/create.html",
+        {"request": request}
+    )
+
+@app.post("/leaves/create")
+async def create_leave(
+    request: Request,
+    employee_id: int = Form(...),
+    start_date: date = Form(...),
+    end_date: date = Form(...),
+    is_paid: bool = Form(...),
+    status: LeaveStatus = Form(...),
+    purpose: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    leave = Leave(
+        employee_id=employee_id,
+        start_date=start_date,
+        end_date=end_date,
+        is_paid=is_paid,
+        status=status,
+        purpose=purpose
+    )
+    db.add(leave)
+    db.commit()
+    return RedirectResponse(url="/leaves", status_code=303)
+
+# Vacancy routes
+@app.get("/vacancies", response_class=HTMLResponse)
+async def list_vacancies(request: Request, db: Session = Depends(get_db)):
+    vacancies = db.query(Vacancy).all()
+    return templates.TemplateResponse(
+        "vacancies/list.html",
+        {"request": request, "vacancies": vacancies}
+    )
+
+
+@app.get("/vacancies/create", response_class=HTMLResponse)
+async def create_position_form(request: Request):
+    return templates.TemplateResponse(
+        "vacancies/create.html",
+        {"request": request}
+    )
+
+@app.post("/vacancies/create")
+async def create_vacancy(
+    request: Request,
+    department_id: int = Form(...),
+    position_id: int = Form(...),
+    position_title: str = Form(...),
+    job_description: str = Form(...),
+    required_skills: str = Form(...),
+    open_date: date = Form(...),
+    is_open: bool = Form(True),
+    db: Session = Depends(get_db)
+):
+    vacancy = Vacancy(
+        department_id=department_id,
+        position_id=position_id,
+        position_title=position_title,
+        job_description=job_description,
+        required_skills=required_skills,
+        open_date=open_date,
+        is_open=is_open
+    )
+    db.add(vacancy)
+    db.commit()
+    return RedirectResponse(url="/vacancies", status_code=303)
+
+@app.post("/vacancies/{vacancy_id}/delete")
+async def delete_position(vacancy_id: int, db: Session = Depends(get_db)):
+    id = db.query(Vacancy).filter(Vacancy.vacancy_id == vacancy_id).first()
+    if id is None:
+        raise HTTPException(status_code=404, detail="Position not found")
+    db.delete(id)
+    db.commit()
+    return RedirectResponse(url="/vacancies", status_code=303)
+
+# Applicant routes
+@app.get("/applicants", response_class=HTMLResponse)
+async def list_applicants(request: Request, db: Session = Depends(get_db)):
+    applicants = db.query(Applicant).all()
+    return templates.TemplateResponse(
+        "applicants/list.html",
+        {"request": request, "applicants": applicants}
+    )
+
+
+@app.get("/applicants/create", response_class=HTMLResponse)
+async def list_applicants(request: Request, db: Session = Depends(get_db)):
+    applicants = db.query(Applicant).all()
+    return templates.TemplateResponse(
+        "applicants/create.html",
+        {"request": request, "applicants": applicants}
+    )
+@app.post("/applicants/create")
+async def create_applicant(
+    request: Request,
+    full_name: str = Form(...),
+    contact_number: str = Form(...),
+    email: str = Form(...),
+    vacancy_id: int = Form(...),
+    resume_url: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    applicant = Applicant(
+        full_name=full_name,
+        contact_number=contact_number,
+        email=email,
+        vacancy_id=vacancy_id,
+        status="Pending",
+        resume_url=resume_url,
+        application_date=date.today()
+    )
+    db.add(applicant)
+    db.commit()
+    return RedirectResponse(url="/applicants", status_code=303)
+
+# Interview routes
+@app.get("/interviews", response_class=HTMLResponse)
+async def list_interviews(request: Request, db: Session = Depends(get_db)):
+    interviews = db.query(Interview).all()
+    return templates.TemplateResponse(
+        "interviews/list.html",
+        {"request": request, "interviews": interviews}
+    )
+
+@app.post("/interviews/create")
+async def create_interview(
+    request: Request,
+    applicant_id: int = Form(...),
+    interview_date: date = Form(...),
+    interview_time: time = Form(...),
+    interviewed_by: int = Form(...),
+    db: Session = Depends(get_db)
+):
+    interview = Interview(
+        applicant_id=applicant_id,
+        interview_date=interview_date,
+        interview_time=interview_time,
+        interview_status="Pending",
+        interviewed_by=interviewed_by
+    )
+    db.add(interview)
+    db.commit()
+    return RedirectResponse(url="/interviews", status_code=303)
+
+# Payment routes
+@app.get("/payments", response_class=HTMLResponse)
+async def list_payments(request: Request, db: Session = Depends(get_db)):
+    payments = db.query(Payment).all()
+    return templates.TemplateResponse(
+        "payments/list.html",
+        {"request": request, "payments": payments}
+    )
+
+@app.post("/payments/create")
+async def create_payment(
+    request: Request,
+    employee_id: int = Form(...),
+    pending_salary: float = Form(...),
+    last_payment_date: date = Form(...),
+    appraisal_date: date = Form(...),
+    adjustments: float = Form(0.0),
+    db: Session = Depends(get_db)
+):
+    payment = Payment(
+        employee_id=employee_id,
+        pending_salary=pending_salary,
+        last_payment_date=last_payment_date,
+        appraisal_date=appraisal_date,
+        adjustments=adjustments
+    )
+    db.add(payment)
+    db.commit()
+    return RedirectResponse(url="/payments", status_code=303)
