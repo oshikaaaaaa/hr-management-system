@@ -1,0 +1,54 @@
+{% extends "./base_create.html" %}
+
+{% block title %}Create New Department - HR Management System{% endblock %}
+
+{% block content %}
+<h1>Create New Department</h1>
+                    
+<form method="POST" action="/departments/create">
+    <div class="mb-3">
+        <label for="department_name" class="form-label">Department Name</label>
+        <input type="text" 
+                class="form-control" 
+                id="department_name" 
+                name="department_name" 
+                required>
+    </div>
+
+    <div class="mb-3">
+        <label for="hod_id" class="form-label">Head of Department ID</label>
+        <input type="number" 
+                class="form-control" 
+                id="hod_id" 
+                name="hod_id" 
+                required>
+    </div>
+
+    <div class="mb-3">
+        <label for="dhod_id" class="form-label">Deputy Head of Department ID</label>
+        <input type="number" 
+                class="form-control" 
+                id="dhod_id" 
+                name="dhod_id" 
+                required>
+    </div>
+
+    <div class="mb-3">
+        <label for="contact_number" class="form-label">Contact Number</label>
+        <input type="tel" 
+                class="form-control" 
+                id="contact_number" 
+                name="contact_number" 
+                pattern="[0-9]+" 
+                required>
+    </div>
+
+    <div class="text-center">
+        <button type="submit" class="btn btn-primary">Create Department</button>
+        <a href="/departments" class="btn btn-secondary ms-2">Cancel</a>
+    </div>
+</form>
+{% endblock %}
+
+
+

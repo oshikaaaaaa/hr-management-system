@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HR Management System{% endblock %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #fafafa; /* Light gray background */
+            padding: 20px;
+            color: #333333; /* Dark gray text */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #ffffff; /* White background for the container */
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #333333; /* Dark gray header text */
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: 1px solid #ddd; /* Light border */
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            background-color: #fff; /* White button background */
+            color: #333; /* Dark gray text */
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #f4f4f4; /* Light gray on hover */
+            border-color: #bbb; /* Darker border on hover */
+        }
+
+        .btn-primary {
+            background-color: #3498db; /* Blue */
+            border-color: #3498db; /* Blue border */
+            color: #fff; /* White text */
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9; /* Darker blue on hover */
+            border-color: #2980b9; /* Darker blue border */
+        }
+
+        .btn-warning {
+            background-color: #474545; /* Amber */
+            border-color: #2f312f; /* Amber border */
+            color: #fff; /* White text */
+        }
+
+        .btn-warning:hover {
+            background-color: #171817; /* Darker amber on hover */
+            border-color: #181a19; /* Darker amber border */
+        }
+
+        .btn-danger {
+            background-color: #2d0808; /* Red */
+            border-color: #3f0f0f; /* Red border */
+            color: #fff; /* White text */
+        }
+
+        .btn-danger:hover {
+            background-color: #c62828; /* Darker red on hover */
+            border-color: #c62828; /* Darker red border */
+        }
+
+        .btn-edit {
+            background-color: #90a4ae; /* Neutral gray */
+            border-color: #90a4ae; /* Neutral gray border */
+            color: #fff; /* White text */
+        }
+
+        .btn-edit:hover {
+            background-color: #78909c; /* Slightly darker gray on hover */
+            border-color: #78909c; /* Darker gray border on hover */
+        }
+
+        .btn-delete {
+            background-color: #607d8b; /* Darker neutral gray */
+            border-color: #607d8b; /* Darker neutral gray border */
+            color: #fff; /* White text */
+        }
+
+        .btn-delete:hover {
+            background-color: #455a64; /* Even darker neutral gray on hover */
+            border-color: #455a64; /* Even darker gray border on hover */
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0; /* Light gray borders */
+        }
+
+        th {
+            background-color: #f8f8f8; /* Light gray header */
+            color: #333333;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f2f2f2; /* Soft hover effect */
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #bdbdbd; /* Light gray text for empty state */
+        }
+        .btn-invisible {
+    background-color: transparent; /* Transparent background */
+    border: none; /* Remove border */
+    color: black; /* Transparent text */
+    cursor: pointer; /* Still shows pointer for clickable buttons */
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

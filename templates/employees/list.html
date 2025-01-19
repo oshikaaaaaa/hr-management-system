@@ -1,0 +1,62 @@
+{% extends "./base_list.html" %}
+
+{% block title %}Employees List - HR Management System{% endblock %}
+
+{% block content %}
+            
+            <div class="header">
+                <h1>Employees</h1>
+                <a href="/employees/create" class="btn btn-primary">Add New Employee</a>
+            </div>
+           
+ 
+
+        <div class="table-container">
+            {% if employees %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Position Type</th>
+                        <th>Department</th>
+                        <th>Hire Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for employee in employees %}
+                    <tr>
+                        <td>{{ employee.employee_id }}</td>
+                        <td>{{ employee.first_name }} {{ employee.last_name }}</td>
+                        <td>{{ employee.position_type }}</td>
+                        <td>{{ employee.department_id }}</td>
+                        <td>{{ employee.hire_date.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            <span class="employee-status status-{{ employee.employment_status.lower() }}">
+                                {{ employee.employment_status }}
+                            </span>
+                        </td>
+                        <td class="actions">
+                            <a href="/employees/{{ employee.employee_id }}" class="btn btn-primary">View</a>
+                            <a href="/employees/{{ employee.employee_id }}/edit" class="btn btn-warning">Edit</a>
+                            <form action="/employees/{{ employee.employee_id }}/delete" method="POST" style="display: inline;">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this employee?')">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <h2>No Employees Found</h2>
+                <p>Get started by adding your first employee</p>
+            </div>
+            {% endif %}
+        </div>
+ 
+{% endblock %}

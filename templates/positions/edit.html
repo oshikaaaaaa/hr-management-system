@@ -1,0 +1,46 @@
+{% extends "./base_edit.html" %}
+{% block title %}Edit Positions - HR Management System{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="alert alert-info">
+            Editing position: {{ position.title }}
+        </div>
+        <form action="/positions/{{ position.position_id }}/edit" method="POST">
+            <div class="form-group">
+                <label for="title">Position Title</label>
+                <input type="text" id="title" name="title" value="{{ position.title }}" maxlength="100" required>
+            </div>
+        
+            <div class="form-group">
+                <label for="base_salary_full">Full-time Base Salary</label>
+                <input type="number" id="base_salary_full" name="base_salary_full" value="{{ position.base_salary_full }}" step="0.01" required>
+            </div>
+        
+            <div class="form-group">
+                <label for="base_salary_part">Part-time Base Salary</label>
+                <input type="number" id="base_salary_part" name="base_salary_part" value="{{ position.base_salary_part }}" step="0.01" required>
+            </div>
+        
+            <div class="form-group">
+                <label for="allowances">Allowances</label>
+                <input type="number" id="allowances" name="allowances" value="{{ position.allowances }}" step="0.01" required>
+            </div>
+        
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="4" required>{{ position.description }}</textarea>
+            </div>
+        
+            <div class="form-group">
+                <label for="required_skills">Required Skills</label>
+                <textarea id="required_skills" name="required_skills" rows="4" required>{{ position.required_skills }}</textarea>
+            </div>
+        
+            <div class="form-actions">
+                <a href="/positions" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+
+        {% endblock %}
