@@ -30,12 +30,12 @@
                     <tr>
                         <td>{{ employee.employee_id }}</td>
                         <td>{{ employee.first_name }} {{ employee.last_name }}</td>
-                        <td>{{ employee.position_type }}</td>
+                        <td>{{ employee.position_type.name }}</td>
                         <td>{{ employee.department_id }}</td>
                         <td>{{ employee.hire_date.strftime('%Y-%m-%d') }}</td>
                         <td>
                             <span class="employee-status status-{{ employee.employment_status.lower() }}">
-                                {{ employee.employment_status }}
+                                {{ employee.employment_status.name }}
                             </span>
                         </td>
                         <td class="actions">
