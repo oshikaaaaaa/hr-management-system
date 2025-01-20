@@ -1,0 +1,60 @@
+{% extends "./base_list.html" %}
+
+{% block title %}Leave Requests - HR Management System{% endblock %}
+
+{% block content %}
+    <div class="header">
+        <h1>Leave Requests</h1>
+        <a href="/leaves/create" class="btn btn-primary">New Leave Request</a>
+    </div>
+
+    <div class="table-container">
+        {% if leaves %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Employee Name</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Leave Type</th>
+                    <th>Status</th>
+                    <th>Purpose</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for leave in leaves %}
+                <tr>
+                    <td>{{ leave.leave_id }}</td>
+                    <td>{{ leave.employee.first_name }} {{ leave.employee.last_name }}</td>
+                    <td>{{ leave.start_date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ leave.end_date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ "Paid" if leave.is_paid else "Unpaid" }}</td>
+                    <td>
+                        <span class="leave-status status-{{ leave.status.lower() }}">
+                            {{ leave.status.name }}
+                        </span>
+                    </td>
+                    <td>{{ leave.purpose }}</td>
+                    <td class="actions">
+                        <a href="/leaves/{{ leave.leave_id }}" class="btn btn-primary">View</a>
+                        <a href="/leaves/{{ leave.leave_id }}/edit" class="btn btn-warning">Edit</a>
+                        <form action="/leaves/{{ leave.leave_id }}/delete" method="POST" style="display: inline;">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this leave request?')">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <h2>No Leave Requests Found</h2>
+            <p>Get started by submitting your first leave request</p>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "./base_create.html" %}
+
+{% block content %}
+<h1>New Leave Request</h1>
+
+<form method="POST" action="{{ url_for('create_leave') }}">
+    <div class="form-group">
+        <label>Employee</label>
+        <select name="employee_id" class="form-control" required>
+            {% for employee in employees %}
+            <option value="{{ employee.employee_id }}">
+                {{ employee.first_name }} {{ employee.last_name }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label>Start Date</label>
+        <input type="date" name="start_date" class="form-control" required>
+    </div>
+    
+    <div class="form-group">
+        <label>End Date</label>
+        <input type="date" name="end_date" class="form-control" required>
+    </div>
+    
+    <div class="form-group">
+        <label>Leave Type</label>
+        <select name="is_paid" class="form-control" required>
+            <option value="true">Paid Leave</option>
+            <option value="false">Unpaid Leave</option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label>Status</label>
+        <select name="status" class="form-control" required>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label>Purpose</label>
+        <textarea name="purpose" class="form-control" required></textarea>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+{% endblock %}

@@ -8,12 +8,13 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from datetime import date, time
 import enum
+from sqlalchemy.exc import IntegrityError
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import create_engine, Table, MetaData, text
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy import Column, Integer, ForeignKey, DateTime, String
@@ -78,6 +79,8 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.datetime.now())
     last_login = Column(DateTime)
 
+    conducted_interviews = relationship("Interview", back_populates="interviewer")
+
 class Employee(Base):
     __tablename__ = "employees"
     
@@ -87,11 +90,19 @@ class Employee(Base):
     date_of_birth = Column(Date)
     gender = Column(Enum(Gender))
     hire_date = Column(Date)
-    department_id = Column(Integer)
-    position_id = Column(Integer)
+    department_id = Column(Integer, ForeignKey("departments.department_id"))
+    position_id = Column(Integer, ForeignKey("positions.position_id"))
+    
     position_type = Column(Enum(PositionType))
     salary = Column(DECIMAL(10, 2))
     employment_status = Column(Enum(EmploymentStatus))
+
+
+    department = relationship("Department", back_populates="employees")
+    position = relationship("Position", back_populates="employees")
+    leaves = relationship("Leave", back_populates="employee")
+    leave_balance = relationship("LeaveBalance", back_populates="employee", uselist=False)
+    payments = relationship("Payment", back_populates="employee")
 
 class Department(Base):
     __tablename__ = "departments"
@@ -102,16 +113,25 @@ class Department(Base):
     dhod_id = Column(Integer)
     contact_number = Column(String(15))
 
+    positions = relationship("Position", back_populates="department")
+    employees = relationship("Employee", back_populates="department")
+    vacancies = relationship("Vacancy", back_populates="department")
+
 class Position(Base):
     __tablename__ = "positions"
     
     position_id = Column(Integer, primary_key=True, index=True)
     title = Column(String(100))
+    department_id = Column(Integer, ForeignKey("departments.department_id"))
     base_salary_full = Column(DECIMAL(10, 2))
     base_salary_part = Column(DECIMAL(10, 2))
     allowances = Column(DECIMAL(10, 2))
     description = Column(Text)
     required_skills = Column(Text)
+
+    department = relationship("Department", back_populates="positions")
+    employees = relationship("Employee", back_populates="position")
+    vacancies = relationship("Vacancy", back_populates="position")
 
 
 class Leave(Base):
@@ -125,6 +145,8 @@ class Leave(Base):
     status = Column(Enum(LeaveStatus))
     purpose = Column(String(255))
 
+    employee = relationship("Employee", back_populates="leaves")
+
 class LeaveBalance(Base):
     __tablename__ = "leave_balances"
     
@@ -132,6 +154,8 @@ class LeaveBalance(Base):
     employee_id = Column(Integer, ForeignKey("employees.employee_id"))
     paid_leave_balance = Column(Integer)
     unpaid_leave_balance = Column(Integer)
+
+    employee = relationship("Employee", back_populates="leave_balance")
 
 class Payment(Base):
     __tablename__ = "payments"
@@ -142,6 +166,8 @@ class Payment(Base):
     last_payment_date = Column(Date)
     appraisal_date = Column(Date)
     adjustments = Column(DECIMAL(10, 2))
+
+    employee = relationship("Employee", back_populates="payments")
 
 class Applicant(Base):
     __tablename__ = "applicants"
@@ -155,6 +181,9 @@ class Applicant(Base):
     resume_url = Column(String(255))
     application_date = Column(Date)
 
+    vacancy = relationship("Vacancy", back_populates="applicants")
+    interviews = relationship("Interview", back_populates="applicant")
+
 
 class Interview(Base):
     __tablename__ = "interviews"
@@ -167,6 +196,9 @@ class Interview(Base):
     interviewed_by = Column(Integer, ForeignKey("users.user_id"))
     interview_notes = Column(Text)
 
+    applicant = relationship("Applicant", back_populates="interviews")
+    interviewer = relationship("User", back_populates="conducted_interviews")
+
 class Vacancy(Base):
     __tablename__ = "vacancies"
     
@@ -178,6 +210,10 @@ class Vacancy(Base):
     required_skills = Column(Text)
     open_date = Column(Date)
     is_open = Column(Boolean, default=True)
+
+    department = relationship("Department", back_populates="vacancies")
+    position = relationship("Position", back_populates="vacancies")
+    applicants = relationship("Applicant", back_populates="vacancy")
 # Create tables
 Base.metadata.create_all(bind=engine)
 
@@ -209,11 +245,38 @@ async def list_employees(request: Request, db: Session = Depends(get_db)):
         {"request": request, "employees": employees}
     )
 
+import json
 @app.get("/employees/create", response_class=HTMLResponse)
-async def create_employee_form(request: Request):
+async def create_employee_form(request: Request, db: Session = Depends(get_db)):
+    # Fetch all departments and positions from the database
+    departments = db.query(Department).all()
+    positions = db.query(Position).all()
+
+    positions_data = [
+        {
+            'position_id': position.position_id,
+            'title': position.title,
+            'department_id': position.department_id  # Make sure this matches exactly with your model
+        }
+        for position in positions
+    ]
+    
+    # Convert to JSON
+    positions_json = json.dumps(positions_data)
+    
+    # Print for debugging
+    print("Positions data:", positions_json)
+
+    
     return templates.TemplateResponse(
         "employees/create.html",
-        {"request": request}
+        {
+            "request": request,
+            "departments": departments,
+            "positions": positions,
+
+            "positions_json": positions_json
+        }
     )
 
 @app.post("/employees/create")
@@ -231,21 +294,34 @@ async def create_employee(
     employment_status: EmploymentStatus = Form(...),
     db: Session = Depends(get_db)
 ):
-    employee = Employee(
-        first_name=first_name,
-        last_name=last_name,
-        date_of_birth=date_of_birth,
-        gender=gender,
-        hire_date=hire_date,
-        department_id=department_id,
-        position_id=position_id,
-        position_type=position_type,
-        salary=salary,
-        employment_status=employment_status
-    )
-    db.add(employee)
-    db.commit()
-    return RedirectResponse(url="/employees", status_code=303)
+    # Verify that department and position exist
+    department = db.query(Department).filter(Department.department_id == department_id).first()
+    position = db.query(Position).filter(Position.position_id == position_id).first()
+    
+
+    
+    if not department or not position:
+        raise HTTPException(status_code=400, detail="Invalid department or position")
+    
+    try:
+        employee = Employee(
+            first_name=first_name,
+            last_name=last_name,
+            date_of_birth=date_of_birth,
+            gender=gender,
+            hire_date=hire_date,
+            department_id=department_id,
+            position_id=position_id,
+            position_type=position_type,
+            salary=salary,
+            employment_status=employment_status
+        )
+        db.add(employee)
+        db.commit()
+        return RedirectResponse(url="/employees", status_code=303)
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail="Database constraint violation")
 
 @app.get("/employees/{employee_id}", response_class=HTMLResponse)
 async def read_employee(request: Request, employee_id: int, db: Session = Depends(get_db)):
@@ -418,6 +494,7 @@ async def create_position(
     request: Request,
     title: str = Form(...),
     base_salary_full: float = Form(...),
+    department_id : int = Form(...),
     base_salary_part: float = Form(...),
     allowances: float = Form(...),
     description: str = Form(...),
@@ -430,6 +507,7 @@ async def create_position(
         base_salary_part=base_salary_part,
         allowances=allowances,
         description=description,
+        department_id = department_id,
         required_skills=required_skills
     )
     db.add(position)
@@ -501,10 +579,12 @@ async def list_leaves(request: Request, db: Session = Depends(get_db)):
     )
 
 @app.get("/leaves/create", response_class=HTMLResponse)
-async def create_leave_form(request: Request):
+async def create_leave_form(request: Request,db: Session = Depends(get_db)):
+    employees = db.query(Employee).all()
     return templates.TemplateResponse(
         "leaves/create.html",
-        {"request": request}
+        {"request": request,
+         "employees":employees}
     )
 
 @app.post("/leaves/create")
@@ -526,7 +606,31 @@ async def create_leave(
         status=status,
         purpose=purpose
     )
+
     db.add(leave)
+    
+
+    today = date.today()
+    if (status == 'Approved' and 
+        start_date <= today <= end_date):
+        
+        employee = db.query(Employee).filter(
+            Employee.employee_id == employee_id
+        ).first()
+        
+        if employee:
+            # Check for any other active approved leaves in this period
+            other_active_leaves = db.query(Leave).filter(
+                Leave.employee_id == employee_id,
+                Leave.status == 'Approved',
+                Leave.start_date <= today,
+                Leave.end_date >= today,
+                Leave.leave_id != leave.leave_id
+            ).first()
+            
+            if not other_active_leaves:
+                employee.employment_status = EmploymentStatus.On_Leave
+
     db.commit()
     return RedirectResponse(url="/leaves", status_code=303)
 

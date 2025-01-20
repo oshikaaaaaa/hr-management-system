@@ -33,6 +33,69 @@
                     <div class="detail-label">Deputy Head of Department (DHOD)</div>
                     <div class="detail-value">Employee ID: {{ department.dhod_id }}</div>
                 </div>
+
+                
+            </div>
+
+            <div class="mt-8">
+                <h2 class="text-xl font-semibold mb-4">Department Employees</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white border border-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            {% for employee in department.employees %}
+                                {% if employee.department_id == department.department_id %}
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">{{ employee.employee_id }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">{{ employee.first_name }} {{ employee.last_name }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ employee.position.title }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                            {% if employee.position_type == 'Full' %}
+                                                bg-green-100 text-green-800
+                                            {% else %}
+                                                bg-yellow-100 text-yellow-800
+                                            {% endif %}">
+                                            {{ employee.position_type.name }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                            {% if employee.employment_status == 'Active' %}
+                                                bg-green-100 text-green-800
+                                            {% elif employee.employment_status == 'On_Leave' %}
+                                                bg-blue-100 text-blue-800
+                                            {% elif employee.employment_status == 'Terminated' %}
+                                                bg-red-100 text-red-800
+                                            {% else %}
+                                                bg-gray-100 text-gray-800
+                                            {% endif %}">
+                                            {{ employee.employment_status.name }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                        <a href="/employees/{{ employee.employee_id }}" 
+                                           class="text-indigo-600 hover:text-indigo-900">View</a>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
