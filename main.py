@@ -1,4 +1,5 @@
 # main.py
+
 from fastapi import FastAPI, Request, Form, Depends, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -20,200 +21,16 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy import Column, Integer, ForeignKey, DateTime, String
 import datetime
 import bcrypt  # Import bcrypt for password hashing
-# Database setup
-SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:Cooperation322060#@localhost:3306/management_system"
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
-# Enums
-class Gender(str, enum.Enum):
-    Male = "Male"
-    Female = "Female"
-    Other = "Other"
 
-class EmploymentStatus(str, enum.Enum):
-    Active = "Active"
-    Resigned = "Resigned"
-    Terminated = "Terminated"
-    On_Leave = "On_Leave"
-    Absent = "Absent"
+from enums import Gender, EmploymentStatus, PositionType, LeaveStatus, ApplicationStatus,InterviewStatus
+from models import User, Employee, Department, Position, Leave, LeaveBalance, Payment, Applicant, Interview, Vacancy
+from base import engine, Base,SessionLocal
 
-class PositionType(str, enum.Enum):
-    Full = "Full"
-    Part = "Part"
-
-class LeaveStatus(str, enum.Enum):
-    Pending = "Pending"
-    Approved = "Approved"
-    Rejected = "Rejected"
-
-
-class ApplicationStatus(str, enum.Enum):
-    PENDING = "Pending"
-    SHORTLISTED = "Shortlisted"
-    INTERVIEWED = "Interviewed"
-    HIRED = "Hired"
-    REJECTED = "Rejected"
-
-
-class InterviewStatus(str, enum.Enum):
-    PENDING = "Pending"
-    COMPLETED= "Completed"
-    RESCHEDULED = "Rescheduled"
-    CANCELLED= "Cancelled"
-    
 
 
     # interview_status = Column(String)  # Could be enum: Pending, Completed, Rescheduled, Cancelled
 
-# Models
 
-# Additional Models
-class User(Base):
-    __tablename__ = "users"
-    
-    user_id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(255), unique=True)
-    password = Column(String(255))
-    is_admin = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.datetime.now())
-    last_login = Column(DateTime)
-
-    conducted_interviews = relationship("Interview", back_populates="interviewer")
-
-class Employee(Base):
-    __tablename__ = "employees"
-    
-    employee_id = Column(Integer, primary_key=True, index=True)
-    first_name = Column(String(255))
-    last_name = Column(String(255))
-    date_of_birth = Column(Date)
-    gender = Column(Enum(Gender))
-    hire_date = Column(Date)
-    department_id = Column(Integer, ForeignKey("departments.department_id"))
-    position_id = Column(Integer, ForeignKey("positions.position_id"))
-    
-    position_type = Column(Enum(PositionType))
-    salary = Column(DECIMAL(10, 2))
-    employment_status = Column(Enum(EmploymentStatus))
-
-
-    department = relationship("Department", back_populates="employees")
-    position = relationship("Position", back_populates="employees")
-    leaves = relationship("Leave", back_populates="employee")
-    leave_balance = relationship("LeaveBalance", back_populates="employee", uselist=False)
-    payments = relationship("Payment", back_populates="employee")
-
-class Department(Base):
-    __tablename__ = "departments"
-    
-    department_id = Column(Integer, primary_key=True, index=True)
-    department_name = Column(String(100))
-    hod_id = Column(Integer)
-    dhod_id = Column(Integer)
-    contact_number = Column(String(15))
-
-    positions = relationship("Position", back_populates="department")
-    employees = relationship("Employee", back_populates="department")
-    vacancies = relationship("Vacancy", back_populates="department")
-
-class Position(Base):
-    __tablename__ = "positions"
-    
-    position_id = Column(Integer, primary_key=True, index=True)
-    title = Column(String(100))
-    department_id = Column(Integer, ForeignKey("departments.department_id"))
-    base_salary_full = Column(DECIMAL(10, 2))
-    base_salary_part = Column(DECIMAL(10, 2))
-    allowances = Column(DECIMAL(10, 2))
-    description = Column(Text)
-    required_skills = Column(Text)
-
-    department = relationship("Department", back_populates="positions")
-    employees = relationship("Employee", back_populates="position")
-    vacancies = relationship("Vacancy", back_populates="position")
-
-
-class Leave(Base):
-    __tablename__ = "leaves"
-    
-    leave_id = Column(Integer, primary_key=True, index=True)
-    employee_id = Column(Integer, ForeignKey("employees.employee_id"))
-    start_date = Column(Date)
-    end_date = Column(Date)
-    is_paid = Column(Boolean)
-    status = Column(Enum(LeaveStatus))
-    purpose = Column(String(255))
-
-    employee = relationship("Employee", back_populates="leaves")
-
-class LeaveBalance(Base):
-    __tablename__ = "leave_balances"
-    
-    balance_id = Column(Integer, primary_key=True, index=True)
-    employee_id = Column(Integer, ForeignKey("employees.employee_id"))
-    paid_leave_balance = Column(Integer)
-    unpaid_leave_balance = Column(Integer)
-
-    employee = relationship("Employee", back_populates="leave_balance")
-
-class Payment(Base):
-    __tablename__ = "payments"
-    
-    payment_id = Column(Integer, primary_key=True, index=True)
-    employee_id = Column(Integer, ForeignKey("employees.employee_id"))
-    pending_salary = Column(DECIMAL(10, 2))
-    last_payment_date = Column(Date)
-    appraisal_date = Column(Date)
-    adjustments = Column(DECIMAL(10, 2))
-
-    employee = relationship("Employee", back_populates="payments")
-
-class Applicant(Base):
-    __tablename__ = "applicants"
-    
-    applicant_id = Column(Integer, primary_key=True, index=True)
-    full_name = Column(String(100))
-    contact_number = Column(String(15))
-    email = Column(String(100))
-    vacancy_id = Column(Integer, ForeignKey("vacancies.vacancy_id"))
-    status = Column(Enum(ApplicationStatus))  # Could be enum: Pending, Shortlisted, Interviewed, Hired, Rejected
-    resume_url = Column(String(255))
-    application_date = Column(Date)
-
-    vacancy = relationship("Vacancy", back_populates="applicants")
-    interviews = relationship("Interview", back_populates="applicant")
-
-
-class Interview(Base):
-    __tablename__ = "interviews"
-    
-    interview_id = Column(Integer, primary_key=True, index=True)
-    applicant_id = Column(Integer, ForeignKey("applicants.applicant_id"))
-    interview_date = Column(Date)
-    interview_time = Column(Time)
-    interview_status = Column(Enum(InterviewStatus))  # Could be enum: Pending, Completed, Rescheduled, Cancelled
-    interviewed_by = Column(Integer, ForeignKey("users.user_id"))
-    interview_notes = Column(Text)
-
-    applicant = relationship("Applicant", back_populates="interviews")
-    interviewer = relationship("User", back_populates="conducted_interviews")
-
-class Vacancy(Base):
-    __tablename__ = "vacancies"
-    
-    vacancy_id = Column(Integer, primary_key=True, index=True)
-    department_id = Column(Integer, ForeignKey("departments.department_id"))
-    position_id = Column(Integer, ForeignKey("positions.position_id"))
-    position_title = Column(String(100))
-    job_description = Column(Text)
-    required_skills = Column(Text)
-    open_date = Column(Date)
-    is_open = Column(Boolean, default=True)
-
-    department = relationship("Department", back_populates="vacancies")
-    position = relationship("Position", back_populates="vacancies")
-    applicants = relationship("Applicant", back_populates="vacancy")
 # Create tables
 Base.metadata.create_all(bind=engine)
 
