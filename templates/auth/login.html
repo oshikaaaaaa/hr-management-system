@@ -1,0 +1,29 @@
+<!-- templates/auth/login.html -->
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Login</title>
+  <link href="/static/css/styles.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="login-container">
+    <h2>Login</h2>
+    <form action="/token" method="post">
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+  </div>
+</body>
+
+</html>
