@@ -37,7 +37,8 @@ from routes import (
     vacancy_routes,
     applicant_routes,
     interview_routes,
-    payment_routes
+    payment_routes,
+    #dashboard_routes
 )
 from auth import auth_middleware
 
@@ -45,7 +46,7 @@ from auth import auth_middleware
 app = FastAPI()
 
 # Add middleware
-#app.middleware("http")(auth_middleware)
+app.middleware("http")(auth_middleware)
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -56,6 +57,7 @@ Base.metadata.create_all(bind=engine)
 
 # Include routers
 app.include_router(auth_routes.router)
+#app.include_router(dashboard_routes.router)
 app.include_router(employee_routes.router)
 app.include_router(department_routes.router)
 app.include_router(leave_routes.router)

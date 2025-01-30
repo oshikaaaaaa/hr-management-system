@@ -5,18 +5,29 @@ import datetime
 
 def create_initial_user():
     db = SessionLocal()
-    
-    admin_user = User(
-        username="admin",
-        password=get_password_hash("your-secure-password"),  # Hash the password
-        is_admin=True,  # Set admin user
-        created_at=datetime.datetime.now(),  # Set created timestamp
-        last_login=None  # No login yet
-    )
-    
-    db.add(admin_user)
-    db.commit()
-    db.close()
+    try:
+        # Check if admin already exists
+        existing_admin = db.query(User).filter(User.username == "admin").first()
+        if existing_admin:
+            print("Admin user already exists")
+            return
+        
+        admin_user = User(
+            username="admin1",
+            password=get_password_hash("pass"),
+            is_admin=True,
+            role="admin",  # Add role if your User model has this field
+            created_at=datetime.datetime.utcnow(),
+            last_login=None
+        )
+        
+        db.add(admin_user)
+        db.commit()
+        print("Admin user created successfully")
+    except Exception as e:
+        print(f"Error creating admin user: {e}")
+    finally:
+        db.close()
 
 if __name__ == "__main__":
     create_initial_user()
