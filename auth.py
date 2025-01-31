@@ -80,13 +80,63 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     
     return {"access_token": access_token, "token_type": "bearer"}
 
+# async def auth_middleware(request: Request, call_next):
+#     # Add "/" to excluded paths
+#     excluded_paths = {"/", "/login", "/token", "/static", "/docs", "/openapi.json", "/login-modal"}
+#     if request.url.path in excluded_paths or request.url.path.startswith("/static/"):
+#         response = await call_next(request)
+#         return response
+
+#     try:
+#         token = request.cookies.get("access_token")
+#         if not token:
+#             return RedirectResponse(url="/login")
+        
+#         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+#         username = payload.get("sub")
+#         if username is None:
+#             return RedirectResponse(url="/login")
+            
+#     except JWTError:
+#         return RedirectResponse(url="/login")
+
+#     response = await call_next(request)
+#     return response
+
 async def auth_middleware(request: Request, call_next):
-    # Exclude login and static paths from authentication
-    excluded_paths = {"/login", "/token", "/static", "/docs", "/openapi.json"}
-    if request.url.path in excluded_paths or request.url.path.startswith("/static/"):
+    # Define all public paths
+    public_paths = {
+        "/",  # Root/public dashboard
+        "/login",
+        "/token",
+        "/static",
+        "/docs", 
+        "/openapi.json",
+        "/login-modal",
+        "/employee-public",  # Public employee page
+        "/departments-public",  # Public departments page
+        "/vacancies-public",  # Public vacancies page
+        # Add any other public paths here
+    }
+    
+    # Check if path starts with any of these prefixes
+    public_prefixes = {
+        "/static/",
+        "/public/",  # For any paths under /public/
+        # Add other prefixes that should be public
+    }
+    
+    # Check if current path is public
+    is_public = (
+        request.url.path in public_paths or 
+        any(request.url.path.startswith(prefix) for prefix in public_prefixes)
+    )
+    
+    if is_public:
         response = await call_next(request)
         return response
 
+    # Authentication check for secure paths
     try:
         token = request.cookies.get("access_token")
         if not token:

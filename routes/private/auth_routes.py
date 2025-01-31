@@ -25,13 +25,33 @@ def get_db():
     finally:
         db.close()
 
+# @router.get("/login")
+# async def login_form(request: Request):
+#     # Check if user is already logged in
+#     token = request.cookies.get("access_token")
+#     if token:
+#         return RedirectResponse(url="/dashboard", status_code=302)
+#     return templates.TemplateResponse("auth/login.html", {"request": request})
+
 @router.get("/login")
 async def login_form(request: Request):
     # Check if user is already logged in
     token = request.cookies.get("access_token")
     if token:
         return RedirectResponse(url="/dashboard", status_code=302)
-    return templates.TemplateResponse("auth/login.html", {"request": request})
+    return templates.TemplateResponse(
+        "auth/login_modal.html", 
+        {"request": request}
+    )
+
+@router.get("/login-modal")
+async def login_modal(request: Request):
+    return templates.TemplateResponse(
+        "auth/login_modal.html", 
+        {"request": request}
+    )
+# Add this new route for the login modal content
+
 
 @router.post("/token")
 async def login(
