@@ -1,0 +1,86 @@
+{% extends "./base_detail.html" %}
+
+{% block title %}Interview Details - HR Management System{% endblock %}
+
+{% block content %}
+<div class="header">
+  <div class="header-title">
+    <h1>Interview Details</h1>
+    <span class="interview-id">Interview ID: {{ interview.interview_id }}</span>
+  </div>
+  <span class="status-badge status-{{ interview.interview_status.value.lower() }}">
+    {{ interview.interview_status.value }}
+  </span>
+</div>
+
+<div class="details-grid">
+  <div class="detail-section">
+    <h2 class="section-title">Applicant Information</h2>
+    <div class="detail-item">
+      <div class="detail-label">Applicant Name</div>
+      <div class="detail-value">{{ interview.applicant.full_name }}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Applicant ID</div>
+      <div class="detail-value">{{ interview.applicant_id }}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Email</div>
+      <div class="detail-value">{{ interview.applicant.email }}</div>
+    </div>
+  </div>
+
+  <div class="detail-section">
+    <h2 class="section-title">Interview Schedule</h2>
+    <div class="detail-item">
+      <div class="detail-label">Date</div>
+      <div class="detail-value">{{ interview.interview_date.strftime('%B %d, %Y') }}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Time</div>
+      <div class="detail-value">{{ interview.interview_time.strftime('%I:%M %p') }}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Status</div>
+      <div class="detail-value">{{ interview.interview_status.value }}</div>
+    </div>
+  </div>
+
+  <div class="detail-section">
+    <h2 class="section-title">Interviewer Details</h2>
+    <div class="detail-item">
+      <div class="detail-label">Interviewer Name</div>
+      <div class="detail-value">{{ interview.interviewer.username }}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Interviewer ID</div>
+      <div class="detail-value">{{ interview.interviewed_by }}</div>
+    </div>
+  </div>
+
+  <div class="detail-section">
+    <h2 class="section-title">Interview Notes</h2>
+    <div class="detail-item">
+      <div class="detail-value interview-notes">
+        {% if interview.interview_notes %}
+        {{ interview.interview_notes }}
+        {% else %}
+        No notes available
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="actions">
+  <a href="/interviews" class="btn btn-secondary">Back to List</a>
+  <a href="/interviews/{{ interview.interview_id }}/edit" class="btn btn-warning">Edit Interview</a>
+  <form action="/interviews/{{ interview.interview_id }}/delete" method="POST" style="display: inline;">
+    <button type="submit" class="btn btn-danger"
+      onclick="return confirm('Are you sure you want to delete this interview?')">
+      Delete Interview
+    </button>
+  </form>
+</div>
+
+{% endblock %}

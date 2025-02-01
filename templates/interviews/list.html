@@ -5,6 +5,7 @@
 {% block content %}
 <div class="header">
   <h1>Interviews</h1>
+  <a href="/interviews/create" class="btn btn-primary">Schedule New Interview</a>
 </div>
 
 <div class="table-container">
@@ -12,25 +13,36 @@
   <table>
     <thead>
       <tr>
-
+        <th>Interview ID</th>
         <th>Applicant</th>
         <th>Date</th>
         <th>Time</th>
         <th>Status</th>
         <th>Interviewer</th>
-
-
+        <th>Notes</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
       {% for interview in interviews %}
       <tr>
+        <td>{{ interview.interview_id }}</td>
         <td>{{ interview.applicant.name if interview.applicant else 'N/A' }}</td>
         <td>{{ interview.interview_date }}</td>
         <td>{{ interview.interview_time }}</td>
         <td>{{ interview.interview_status.value }}</td>
         <td>{{ interview.interviewer.name if interview.interviewer else 'Not Assigned' }}</td>
-
+        <td>{{ interview.interview_notes }}</td>
+        <td class="actions">
+          <a href="/interviews/{{ interview.interview_id }}" class="btn btn-primary">View</a>
+          <a href="/interviews/{{ interview.interview_id }}/edit" class="btn btn-warning">Edit</a>
+          <form action="/interviews/{{ interview.interview_id }}/delete" method="POST" style="display: inline;">
+            <button type="submit" class="btn btn-danger"
+              onclick="return confirm('Are you sure you want to delete this interview?')">
+              Delete
+            </button>
+          </form>
+        </td>
       </tr>
       {% endfor %}
     </tbody>
