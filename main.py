@@ -18,6 +18,7 @@ from base import engine, Base,SessionLocal
 #from auth import auth_middleware, get_current_user  # Add get_current_user here
 
 from routes.public import (dashboard_routes,department_list_routes,job_listing_routes,postion_list_routes,                           interviews_dates_routes,
+login_routes
 )
 
 from routes.shared import (
@@ -57,17 +58,12 @@ Base.metadata.create_all(bind=engine)
 
 
 # public routes
-app.include_router(auth_routes.router)
+# app.include_router(auth_routes.router)
 app.include_router(department_list_routes.router)
 app.include_router(job_listing_routes.router)
 app.include_router(postion_list_routes.router)
 app.include_router(interviews_dates_routes.router)
-
-# app.include_router(.router)
-
-
-
-#app.include_router(departments_public_routes.router)
+app.include_router(login_routes.router)
 
 #shared routes
 app.include_router(about_routes.router)
