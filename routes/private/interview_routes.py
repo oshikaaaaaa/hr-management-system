@@ -4,8 +4,8 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session,joinedload
 from datetime import date
-from datetime import date, time
-import datetime
+from datetime import datetime
+ 
 
 from enums import InterviewStatus
 

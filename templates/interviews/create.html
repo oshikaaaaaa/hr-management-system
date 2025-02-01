@@ -11,7 +11,7 @@
     <select id="applicant_id" name="applicant_id" required>
       <option value="">Select an applicant</option>
       {% for applicant in applicants %}
-      <option value="{{ applicant.applicant_id }}">{{ applicant.name }}</option>
+      <option value="{{ applicant.applicant_id }}">{{ applicant.full_name }}</option>
       {% endfor %}
     </select>
   </div>
@@ -41,7 +41,7 @@
     <select id="interviewed_by" name="interviewed_by" required>
       <option value="">Select an interviewer</option>
       {% for user in users %}
-      <option value="{{ user.user_id }}">{{ user.name }}</option>
+      <option value="{{ user.user_id }}">{{ user.username }}</option>
       {% endfor %}
     </select>
   </div>
