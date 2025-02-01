@@ -1,0 +1,59 @@
+{% extends "./base_edit.html" %}
+
+{% block title %}Edit Interview - HR Management System{% endblock %}
+{% block content %}
+
+<div class="header">
+  <h1>Edit Interview</h1>
+</div>
+
+<div class="alert alert-info">
+  Editing interview for applicant: {{ interview.applicant.first_name }} {{ interview.applicant.last_name }}
+</div>
+
+<form action="/interviews/{{ interview.interview_id }}/edit" method="POST">
+  <div class="form-group">
+    <label for="applicant_id">Applicant ID</label>
+    <input type="number" id="applicant_id" name="applicant_id" value="{{ interview.applicant_id }}" required>
+  </div>
+
+  <div class="form-group">
+    <label for="interview_date">Interview Date</label>
+    <input type="date" id="interview_date" name="interview_date"
+      value="{{ interview.interview_date.strftime('%Y-%m-%d') }}" required>
+  </div>
+
+  <div class="form-group">
+    <label for="interview_time">Interview Time</label>
+    <input type="time" id="interview_time" name="interview_time"
+      value="{{ interview.interview_time.strftime('%H:%M') }}" required>
+  </div>
+
+  <div class="form-group">
+    <label for="interview_status">Interview Status</label>
+    <select id="interview_status" name="interview_status" required>
+      <option value="Pending" {% if interview.interview_status=="PENDING" %}selected{% endif %}>Pending</option>
+      <option value="Completed" {% if interview.interview_status=="COMPLETED" %}selected{% endif %}>Completed</option>
+      <option value="Cancelled" {% if interview.interview_status=="CANCELLED" %}selected{% endif %}>Cancelled</option>
+      <option value="Rescheduled" {% if interview.interview_status=="RESCHEDULED" %}selected{% endif %}>Rescheduled
+      </option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="interviewed_by">Interviewer ID</label>
+    <input type="number" id="interviewed_by" name="interviewed_by" value="{{ interview.interviewed_by }}" required>
+  </div>
+
+  <div class="form-group">
+    <label for="interview_notes">Interview Notes</label>
+    <textarea id="interview_notes" name="interview_notes" rows="4"
+      class="form-control">{{ interview.interview_notes }}</textarea>
+  </div>
+
+  <div class="form-actions">
+    <a href="/interviews" class="btn btn-secondary">Cancel</a>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+  </div>
+</form>
+{% endblock %}

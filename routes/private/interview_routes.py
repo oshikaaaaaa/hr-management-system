@@ -4,7 +4,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session,joinedload
 from datetime import date
-from datetime import datetime
+from datetime import time,datetime
  
 
 from enums import InterviewStatus
@@ -154,46 +154,56 @@ async def delete_position(interview_id: int, db: Session = Depends(get_db)):
     return RedirectResponse(url="/interviews", status_code=303)
 
 
-# @router.get("/{employee_id}/edit", response_class=HTMLResponse)
-# async def edit_employee_form(request: Request, employee_id: int, db: Session = Depends(get_db)):
-#     employee = db.query(Employee).filter(Employee.employee_id == employee_id).first()
-#     if employee is None:
-#         raise HTTPException(status_code=404, detail="Employee not found")
-#     return templates.TemplateResponse(
-#         "employees/edit.html",
-#         {"request": request, "employee": employee}
-#     )
-
-# @router.post("/{employee_id}/edit")
-# async def edit_employee(
-#     request: Request,
-#     employee_id: int,
-#     first_name: str = Form(...),
-#     last_name: str = Form(...),
-#     date_of_birth: date = Form(...),
-#     gender: Gender = Form(...),
-#     hire_date: date = Form(...),
-#     department_id: int = Form(...),
-#     position_id: int = Form(...),
-#     position_type: PositionType = Form(...),
-#     salary: float = Form(...),
-#     employment_status: EmploymentStatus = Form(...),
-#     db: Session = Depends(get_db)
-# ):
-#     employee = db.query(Employee).filter(Employee.employee_id == employee_id).first()
-#     if employee is None:
-#         raise HTTPException(status_code=404, detail="Employee not found")
-        
-#     employee.first_name = first_name
-#     employee.last_name = last_name
-#     employee.date_of_birth = date_of_birth
-#     employee.gender = gender
-#     employee.hire_date = hire_date
-#     employee.department_id = department_id
-#     employee.position_id = position_id
-#     employee.position_type = position_type
-#     employee.salary = salary
-#     employee.employment_status = employment_status
+@router.get("/{interview_id}/edit", response_class=HTMLResponse)
+async def edit_interview_form(request: Request, interview_id: int, db: Session = Depends(get_db)):
+    interview = db.query(Interview).filter(Interview.interview_id == interview_id).first()
+    if interview is None:
+        raise HTTPException(status_code=404, detail="Interview not found")
+    return templates.TemplateResponse(
+        "interviews/edit.html",
+        {"request": request, "interview": interview}
+    )
+@router.get("/{interview_id}", response_class=HTMLResponse)
+async def view_interview(request: Request, interview_id: int, db: Session = Depends(get_db)):
+    interview = (
+        db.query(Interview)
+        .options(
+            joinedload(Interview.applicant),
+            joinedload(Interview.interviewer)
+        )
+        .filter(Interview.interview_id == interview_id)
+        .first()
+    )
+    if interview is None:
+        raise HTTPException(status_code=404, detail="Interview not found")
     
-#     db.commit()
-#     return RedirectResponse(url=f"/employees/{employee_id}", status_code=303)
+    return templates.TemplateResponse(
+        "interviews/view.html",
+        {"request": request, "interview": interview}
+    )
+
+@router.post("/{interview_id}/edit")
+async def edit_interview(
+    request: Request,
+    interview_id: int,
+    applicant_id: int = Form(...),
+    interview_date: date = Form(...),
+    interview_time: time = Form(...),
+    interview_status: InterviewStatus = Form(...),
+    interviewed_by: int = Form(...),
+    interview_notes: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    interview = db.query(Interview).filter(Interview.interview_id == interview_id).first()
+    if interview is None:
+        raise HTTPException(status_code=404, detail="Interview not found")
+        
+    interview.applicant_id = applicant_id
+    interview.interview_date = interview_date
+    interview.interview_time = interview_time
+    interview.interview_status = interview_status
+    interview.interviewed_by = interviewed_by
+    interview.interview_notes = interview_notes
+    
+    db.commit()
+    return RedirectResponse(url=f"/interviews/{interview_id}", status_code=303)
