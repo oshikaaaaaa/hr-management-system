@@ -1,0 +1,50 @@
+{% extends "./base_list.html" %}
+
+{% block title %}Vacancies List - HR Management System{% endblock %}
+
+{% block content %}
+<div class="header">
+  <h1>Vacancies</h1>
+</div>
+
+<div class="table-container">
+  {% if vacancies %}
+  <table>
+    <thead>
+      <tr>
+        <th>Vacancy ID</th>
+        <th>Department ID</th>
+        <th>Position</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Required Skills</th>
+        <th>Open Date</th>
+        <th>Status</th>
+
+      </tr>
+    </thead>
+    <tbody>
+      {% for vacancy in vacancies %}
+      <tr>
+        <td>{{ vacancy.vacancy_id }}</td>
+        <td>{{ vacancy.department_id }}</td>
+
+        <td>{{ vacancy.position_id }}</td>
+        <td>{{ vacancy.position_title }}</td>
+        <td>{{ vacancy.job_description }}</td>
+        <td>{{ vacancy.required_skills }}</td>
+        <td>{{ vacancy.open_date }}</td>
+        <td>{{ "Open" if vacancy.is_open else "Closed" }}</td>
+
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <h2>No Vacancies Found</h2>
+    <p>Get started by adding your first vacancy</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

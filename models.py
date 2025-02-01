@@ -3,10 +3,21 @@ from sqlalchemy import (
     Column, Integer, String, ForeignKey, Date, Boolean, DECIMAL, Enum, Text, Time
 )
 from sqlalchemy.orm import relationship
+
 from base import Base  # ✅ Import Base from base.py
 from enums import Gender, EmploymentStatus, PositionType, LeaveStatus, ApplicationStatus, InterviewStatus  # ✅ Import Enums
 
 # Models
+class ContactUs(Base):
+    __tablename__ = "contact_us"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)  # Auto-incrementing ID
+    username = Column(String(255), unique=True)
+    email = Column(String(255))
+    phone = Column(String(255),nullable=True)
+    subject=Column(Text)
+    message=Column(Text)
+    sent_at = Column(Date, default=datetime.datetime.utcnow())
+
 class User(Base):
     __tablename__ = "users"
     
@@ -35,6 +46,7 @@ class Employee(Base):
     salary = Column(DECIMAL(10, 2))
     employment_status = Column(Enum(EmploymentStatus))
 
+
     department = relationship("Department", back_populates="employees")
     position = relationship("Position", back_populates="employees")
     leaves = relationship("Leave", back_populates="employee")
@@ -53,7 +65,7 @@ class Department(Base):
     positions = relationship("Position", back_populates="department")
     employees = relationship("Employee", back_populates="department")
     vacancies = relationship("Vacancy", back_populates="department")
-
+   
 class Position(Base):
     __tablename__ = "positions"
     

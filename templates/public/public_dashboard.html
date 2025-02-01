@@ -188,6 +188,11 @@
       color: var(--text-light);
     }
 
+    .features a {
+      text-decoration: none;
+      color: inherit;
+    }
+
     .locked-feature {
       opacity: 0.7;
     }
@@ -197,6 +202,16 @@
       top: 1rem;
       right: 1rem;
       font-size: 1.25rem;
+    }
+
+    footer {
+      background-color: var(--primary);
+      color: white;
+      text-align: center;
+      padding: 10px;
+      position: relative;
+      bottom: 0;
+      width: 100%;
     }
 
     @media (max-width: 768px) {
@@ -224,6 +239,8 @@
       .hero h1 {
         font-size: 2rem;
       }
+
+
     }
   </style>
 </head>
@@ -248,7 +265,7 @@
     </div>
   </section>
 
-  <main class="container">
+  <!-- <main class="container">
     <div class="stats-grid">
       <div class="stat-card">
         <div class="number">500+</div>
@@ -266,39 +283,41 @@
         <div class="number">24/7</div>
         <div class="label">Support Available</div>
       </div>
-    </div>
+    </div> -->
 
-    <section class="features">
+  <section class="features">
+    <a href="/job_listing">
       <div class="feature-card">
         <h3>Public Job Listings</h3>
         <p>Browse current job openings and career opportunities.</p>
       </div>
-      <div class="feature-card locked-feature">
-        <span class="lock-icon">🔒</span>
-        <h3>Employee Management</h3>
-        <p>Manage employee records, attendance, and performance tracking. Login required.</p>
-      </div>
+    </a>
+
+    <div class="feature-card">
+      <h3>Interview Dates</h3>
+      <p>View shotlisted candidates' interview dates</p>
+    </div>
+
+    <a href="/department_list">
       <div class="feature-card">
-        <h3>Company Directory</h3>
-        <p>View public department structure and contact information.</p>
+        <h3>Departments</h3>
+        <p>View the departments in Pulchowk College.</p>
       </div>
-      <div class="feature-card locked-feature">
-        <span class="lock-icon">🔒</span>
-        <h3>Department Management</h3>
-        <p>Organize and oversee department structures and hierarchies. Login required.</p>
+    </a>
+
+    <a href="/position_list">
+      <div class="feature-card">
+        <h3>Positions</h3>
+        <p>Job positions and roles currently in Pulchowk Campus.</p>
       </div>
-      <div class="feature-card locked-feature">
-        <span class="lock-icon">🔒</span>
-        <h3>Position Management</h3>
-        <p>Define and manage job positions and roles. Login required.</p>
-      </div>
-      <div class="feature-card locked-feature">
-        <span class="lock-icon">🔒</span>
-        <h3>Leave Management</h3>
-        <p>Handle leave requests and track employee time off. Login required.</p>
-      </div>
-    </section>
+    </a>
+  </section>
+
+  </section>
   </main>
+  <footer>
+    © 2024 Pulchowk Campus. All Rights Reserved.
+  </footer>
 </body>
 
 </html>

@@ -7,7 +7,6 @@
 
 <div class="header">
   <h1>Departments</h1>
-  <a href="/departments/create" class="btn btn-primary">Add New Department</a>
 </div>
 
 <div class="table-container">
@@ -17,10 +16,7 @@
       <tr>
         <th>ID</th>
         <th>Department Name</th>
-        <th>Head of Department</th>
-        <th>Deputy Head</th>
         <th>Contact Number</th>
-        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -28,19 +24,8 @@
       <tr>
         <td>{{ department.department_id }}</td>
         <td>{{ department.department_name }}</td>
-        <td>{{ department.hod_id }}</td>
-        <td>{{ department.dhod_id }}</td>
         <td>{{ department.contact_number }}</td>
-        <td class="actions">
-          <a href="/departments/{{ department.department_id }}" class="btn btn-primary">View</a>
-          <a href="/departments/{{ department.department_id }}/edit" class="btn btn-warning">Edit</a>
-          <form action="/departments/{{ department.department_id }}/delete" method="POST" style="display: inline;">
-            <button type="submit" class="btn btn-danger"
-              onclick="return confirm('Are you sure you want to delete this department?')">
-              Delete
-            </button>
-          </form>
-        </td>
+
       </tr>
       {% endfor %}
     </tbody>

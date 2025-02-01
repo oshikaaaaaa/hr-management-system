@@ -17,7 +17,7 @@ from enums import Gender, EmploymentStatus, PositionType, LeaveStatus, Applicati
 from base import engine, Base,SessionLocal
 #from auth import auth_middleware, get_current_user  # Add get_current_user here
 
-from routes.public import dashboard_routes
+from routes.public import (dashboard_routes,department_list_routes,job_listing_routes,postion_list_routes)
 
 from routes.shared import (
   about_routes,
@@ -37,7 +37,7 @@ from routes.private import (
 
 
 # from auth import auth_middleware
-from routes.public import departments_public_routes
+from routes.public import department_list_routes
 
 # FastAPI app setup
 app = FastAPI()
@@ -56,6 +56,13 @@ Base.metadata.create_all(bind=engine)
 
 # public routes
 app.include_router(auth_routes.router)
+app.include_router(department_list_routes.router)
+app.include_router(job_listing_routes.router)
+app.include_router(postion_list_routes.router)
+# app.include_router(.router)
+
+
+
 #app.include_router(departments_public_routes.router)
 
 #shared routes

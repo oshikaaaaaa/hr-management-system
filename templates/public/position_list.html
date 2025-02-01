@@ -1,0 +1,46 @@
+{% extends "./base_list.html" %}
+
+{% block title %}Positions List - HR Management System{% endblock %}
+
+{% block content %}
+<div class="header">
+  <h1>Positions</h1>
+</div>
+
+<div class="table-container">
+  {% if positions %}
+  <table>
+    <thead>
+      <tr>
+        <th>Position ID</th>
+        <th>Title</th>
+        <th>Base Salary (Full Time)</th>
+        <th>Base Salary (Part Time)</th>
+        <th>Allowances</th>
+        <th>Description</th>
+        <th>Required Skills</th>
+
+      </tr>
+    </thead>
+    <tbody>
+      {% for position in positions %}
+      <tr>
+        <td>{{ position.position_id }}</td>
+        <td>{{ position.title }}</td>
+        <td>{{ position.base_salary_full }}</td>
+        <td>{{ position.base_salary_part }}</td>
+        <td>{{ position.allowances }}</td>
+        <td>{{ position.description }}</td>
+        <td>{{ position.required_skills }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <h2>No Positions Found</h2>
+    <p>Get started by adding your first position</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

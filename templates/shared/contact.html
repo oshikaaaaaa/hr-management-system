@@ -230,10 +230,10 @@
   </section>
 
   <main class="container">
-    <form class="contact-form">
+    <form action="/contact" class="contact-form" method="POST">
       <div class="form-group">
-        <label for="name">Full Name</label>
-        <input type="text" id="name" name="name" required>
+        <label for="username">Full Name</label>
+        <input type="text" id="username" name="username" required>
       </div>
       <div class="form-group">
         <label for="email">Email Address</label>
@@ -254,9 +254,28 @@
           <option value="benefits">Benefits Inquiry</option>
           <option value="training">Training & Development</option>
           <option value="general">General Inquiry</option>
-          <option value="other">Other</option>
+          <option value="other">Other (Please specify)</option>
         </select>
+
+        <!-- Text input appears only if 'Other' is selected -->
+        <input type="text" id="custom_subject" name="custom_subject" placeholder="Specify your subject"
+          style="display:none; width:100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px;" />
       </div>
+
+      <script>
+        // JavaScript to toggle visibility of custom input field
+        document.getElementById('subject').addEventListener('change', function () {
+          var selectedOption = this.value;
+          var customInput = document.getElementById('custom_subject');
+
+          if (selectedOption === 'other') {
+            customInput.style.display = 'block';  // Show the custom input
+          } else {
+            customInput.style.display = 'none';  // Hide the custom input
+          }
+        });
+      </script>
+
       <div class="form-group">
         <label for="message">Your Message</label>
         <textarea id="message" name="message" rows="5" required></textarea>
