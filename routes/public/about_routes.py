@@ -27,4 +27,4 @@ def get_db():
 
 @router.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    return templates.TemplateResponse("shared/about.html", {"request": request})
+    return templates.TemplateResponse("public/about.html", {"request": request})

@@ -26,7 +26,7 @@ def get_db():
 
 @router.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    return templates.TemplateResponse("shared/contact.html", {"request": request})
+    return templates.TemplateResponse("public/contact.html", {"request": request})
 
 @router.post("/")
 async def create_position(

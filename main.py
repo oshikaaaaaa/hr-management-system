@@ -10,7 +10,6 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import create_engine, Table, MetaData, text
 from sqlalchemy.orm import sessionmaker, relationship
-  # Import bcrypt for password hashing
   
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -18,18 +17,16 @@ from base import engine, Base, SessionLocal
 from auth import auth_middleware, get_current_user
 
 
-from routes.public import (dashboard_routes,department_list_routes,job_listing_routes,postion_list_routes,                           interviews_dates_routes,
+from routes.public import (dashboard_routes,department_list_routes,job_listing_routes,postion_list_routes,                           interviews_dates_routes, about_routes,
+  contact_routes,
 login_routes
 )
 
-from routes.shared import (
-  about_routes,
-  contact_routes)
+
 from routes.private import (
     employee_routes,
     department_routes,
     leave_routes,
-    # auth_routes,
     position_routes,
     vacancy_routes,
     applicant_routes,
@@ -54,6 +51,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
 
 # Add authentication middleware
 app.middleware("http")(auth_middleware)

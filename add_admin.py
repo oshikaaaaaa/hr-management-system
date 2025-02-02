@@ -1,6 +1,6 @@
 from models import User
 from base import SessionLocal
-from auth import get_password_hash
+from auth1 import get_password_hash
 import datetime
 
 def create_initial_user():

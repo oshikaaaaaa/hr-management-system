@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
+from fastapi.responses import RedirectResponse
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
@@ -66,44 +67,102 @@ async def get_current_user(request: Request, db: Session = Depends(get_db)):
 
 # Middleware for protecting routes
 # auth.py (updating only the middleware part)
+# async def auth_middleware(request, call_next):
+#     # Define public and private paths
+#     public_paths = {"/login", "/", "/about", "/contact", 
+#                    "/department_list", "/interview_dates", 
+#                    "/job_listing", "/position_list", "/logout"}
+    
+#     private_paths = {"/dashboard", "/employees", "/departments", 
+#                     "/leaves", "/positions", "/vacancies", 
+#                     "/applicants", "/interviews", "/payments"}
+    
+#     # current_path = request.url.path.rstrip('/')
+#     current_path = request.url.path.rstrip('/')
+
+    
+#     # Allow static files
+#     if current_path.startswith("/static"):
+#         response = await call_next(request)
+#         return response
+        
+#     # Check if path is private
+#     is_private = any(current_path.startswith(path) for path in private_paths)
+#     if is_private:
+#         try:
+#             token = request.cookies.get("access_token")
+#             if not token:
+#                 # Redirect to login if no token
+#                 from fastapi.responses import RedirectResponse
+#                 return RedirectResponse(url="/login", status_code=302)
+            
+#             # Verify token
+#             try:
+#                 payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+#                 username = payload.get("sub")
+#                 if username is None:
+#                     return RedirectResponse(url="/login", status_code=302)
+#             except JWTError:
+#                 return RedirectResponse(url="/login", status_code=302)
+                
+#         except Exception:
+#             return RedirectResponse(url="/login", status_code=302)
+    
+#     response = await call_next(request)
+#     return response
+
+# auth.py
 async def auth_middleware(request, call_next):
     # Define public and private paths
     public_paths = {"/login", "/", "/about", "/contact", 
                    "/department_list", "/interview_dates", 
                    "/job_listing", "/position_list", "/logout"}
     
-    private_paths = {"/dashboard", "/employees", "/departments", 
-                    "/leaves", "/positions", "/vacancies", 
-                    "/applicants", "/interviews", "/payments"}
+    path = request.url.path.rstrip('/')
     
-    current_path = request.url.path.rstrip('/')
-    
-    # Allow static files
-    if current_path.startswith("/static"):
+    #root path
+    if path == "" or path == "/":
         response = await call_next(request)
         return response
+    
+    # Allow static files
+    if path.startswith("/static"):
+        response = await call_next(request)
+        return response
+    
+    # Better public path checking that handles subpaths
+    is_public = False
+    for public_path in public_paths:
+        # Check if the path exactly matches or is a subpath of a public path
+        if path == public_path or path.startswith(public_path + "/"):
+            is_public = True
+            break
+    
+    if not is_public:
+        token = request.cookies.get("access_token")
+        if not token:
+            return RedirectResponse(
+                url="/login?next=" + request.url.path,
+                status_code=status.HTTP_303_SEE_OTHER
+            )
         
-    # Check if path is private
-    is_private = any(current_path.startswith(path) for path in private_paths)
-    if is_private:
         try:
-            token = request.cookies.get("access_token")
-            if not token:
-                # Redirect to login if no token
-                from fastapi.responses import RedirectResponse
-                return RedirectResponse(url="/login", status_code=302)
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            username = payload.get("sub")
+            if not username:
+                return RedirectResponse(
+                    url="/login",
+                    status_code=status.HTTP_303_SEE_OTHER
+                )
             
-            # Verify token
-            try:
-                payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-                username = payload.get("sub")
-                if username is None:
-                    return RedirectResponse(url="/login", status_code=302)
-            except JWTError:
-                return RedirectResponse(url="/login", status_code=302)
-                
-        except Exception:
-            return RedirectResponse(url="/login", status_code=302)
+            # Add user to request state
+            request.state.user = username
+            
+        except JWTError:
+            return RedirectResponse(
+                url="/login",
+                status_code=status.HTTP_303_SEE_OTHER
+            )
     
     response = await call_next(request)
     return response

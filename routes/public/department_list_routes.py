@@ -30,11 +30,4 @@ async def list_public_departments(request: Request, db: Session = Depends(get_db
         {"request": request, "departments": departments}
     )
 
-# @router.get("/department_list")  # or whatever your route decorator is
-# def get_departments(db: Session = Depends(get_db)):
-#     departments = db.query(Department)\
-#         .options(
-#             joinedload(Department.hod),
-#             joinedload(Department.dhod)
-#         ).all()
-#     return {"departments": departments}
+

@@ -40,12 +40,7 @@ async def list_interviews(request: Request, db: Session = Depends(get_db)):
       
     formatted_interviews = []
     for interview in interviews:
-        # Debug print
-        print(f"Interview ID: {interview.interview_id}")
-        print(f"Applicant ID: {interview.applicant_id}")
-        print(f"Interviewer ID: {interview.interviewed_by}")
-        print(f"Applicant: {interview.applicant}")
-        print(f"Interviewer: {interview.interviewer}")
+        
         
         formatted_interviews.append({
             'interview_id': interview.interview_id,
