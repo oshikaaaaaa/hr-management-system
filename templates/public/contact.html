@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact - HR Management</title>
+  <style>
+    :root {
+      --primary: #000000;
+      --primary-light: #333333;
+      --text: #1a1a1a;
+      --text-light: #666666;
+      --background: #f9f9f9;
+      --card-bg: #ffffff;
+      --border: #e0e0e0;
+      --hover: #f0f0f0;
+      --accent: #1a1a1a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      line-height: 1.6;
+      background-color: var(--background);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    nav {
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--border);
+      background-color: var(--card-bg);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-light);
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      position: relative;
+    }
+
+    .login-btn {
+      background-color: var(--primary);
+      color: white !important;
+      border-radius: 8px;
+      padding: 0.5rem 1rem !important;
+    }
+
+    .login-btn:hover {
+      background-color: var(--primary-light);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 50%;
+      background-color: var(--primary);
+      transition: all 0.2s ease;
+    }
+
+    .nav-links a:not(.login-btn):hover::after {
+      width: 100%;
+      left: 0;
+    }
+
+    .hero {
+      padding: 6rem 0;
+      text-align: center;
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: -0.03em;
+      color: var(--primary);
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--text-light);
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+
+    .contact-form {
+      max-width: 600px;
+      margin: 2rem auto;
+      background: var(--card-bg);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border: 1px solid var(--border);
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      background-color: var(--primary-light);
+    }
+
+    .contact-info {
+      text-align: center;
+      margin-top: 2rem;
+      padding: 2rem;
+      background: var(--background);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    @media (max-width: 768px) {
+      .nav-container {
+        flex-direction: column;
+        padding: 1rem 0;
+      }
+
+      .nav-links {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.5rem;
+      }
+
+      .nav-links a {
+        width: 100%;
+        text-align: center;
+        padding: 0.75rem;
+      }
+
+      .hero {
+        padding: 3rem 0;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <div class="container nav-container">
+      <a href="/" class="logo">HR Management</a>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/dashboard" class="login-btn">Login</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="container">
+      <h1>Contact Us</h1>
+      <p>We're here to help. Send us a message and we'll get back to you soon.</p>
+    </div>
+  </section>
+
+  <main class="container">
+    <form action="/contact" class="contact-form" method="POST">
+      <div class="form-group">
+        <label for="username">Full Name</label>
+        <input type="text" id="username" name="username" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone Number (Optional)</label>
+        <input type="tel" id="phone" name="phone">
+      </div>
+      <div class="form-group">
+        <label for="subject">Message Subject</label>
+        <select id="subject" name="subject" required>
+          <option value="">Select a Subject</option>
+          <option value="interview">Interview Inquiry</option>
+          <option value="vacancy">Job Vacancy</option>
+          <option value="recruitment">Recruitment Process</option>
+          <option value="employee-support">Employee Support</option>
+          <option value="benefits">Benefits Inquiry</option>
+          <option value="training">Training & Development</option>
+          <option value="general">General Inquiry</option>
+          <option value="other">Other (Please specify)</option>
+        </select>
+
+        <!-- Text input appears only if 'Other' is selected -->
+        <input type="text" id="custom_subject" name="custom_subject" placeholder="Specify your subject"
+          style="display:none; width:100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px;" />
+      </div>
+
+      <script>
+        // JavaScript to toggle visibility of custom input field
+        document.getElementById('subject').addEventListener('change', function () {
+          var selectedOption = this.value;
+          var customInput = document.getElementById('custom_subject');
+
+          if (selectedOption === 'other') {
+            customInput.style.display = 'block';  // Show the custom input
+          } else {
+            customInput.style.display = 'none';  // Hide the custom input
+          }
+        });
+      </script>
+
+      <div class="form-group">
+        <label for="message">Your Message</label>
+        <textarea id="message" name="message" rows="5" required></textarea>
+      </div>
+      <button type="submit" class="submit-btn">Send Message</button>
+    </form>
+
+    <div class="contact-info">
+      <h2>Our Contact Details</h2>
+      <p>Email: support@hrmanagement.com</p>
+      <p>Phone: +1 (555) 123-4567</p>
+      <p>Address: 123 Business Street, Suite 500, City, Country</p>
+    </div>
+  </main>
+</body>
+
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HR Management System</title>
+  <style>
+    :root {
+      --primary: #000000;
+      --primary-light: #333333;
+      --text: #1a1a1a;
+      --text-light: #666666;
+      --background: #f9f9f9;
+      --card-bg: #ffffff;
+      --border: #e0e0e0;
+      --hover: #f0f0f0;
+      --accent: #1a1a1a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      line-height: 1.6;
+      background-color: var(--background);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    nav {
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--border);
+      background-color: var(--card-bg);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-light);
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      position: relative;
+    }
+
+    .login-btn {
+      background-color: var(--primary);
+      color: white !important;
+      border-radius: 8px;
+      padding: 0.5rem 1rem !important;
+    }
+
+    .login-btn:hover {
+      background-color: var(--primary-light);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 50%;
+      background-color: var(--primary);
+      transition: all 0.2s ease;
+    }
+
+    .nav-links a:not(.login-btn):hover::after {
+      width: 100%;
+      left: 0;
+    }
+
+    .hero {
+      padding: 6rem 0;
+      text-align: center;
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: -0.03em;
+      color: var(--primary);
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--text-light);
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 2rem;
+      margin: 3rem 0;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .stat-card .number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-card .label {
+      color: var(--text-light);
+      font-size: 1rem;
+    }
+
+    .features {
+      padding: 4rem 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      padding: 2rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .feature-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+
+    .feature-card p {
+      color: var(--text-light);
+    }
+
+    .features a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .locked-feature {
+      opacity: 0.7;
+    }
+
+    .lock-icon {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 1.25rem;
+    }
+
+    footer {
+      background-color: var(--primary);
+      color: white;
+      text-align: center;
+      padding: 10px;
+      position: relative;
+      bottom: 0;
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .nav-container {
+        flex-direction: column;
+        padding: 1rem 0;
+      }
+
+      .nav-links {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.5rem;
+      }
+
+      .nav-links a {
+        width: 100%;
+        text-align: center;
+        padding: 0.75rem;
+      }
+
+      .hero {
+        padding: 3rem 0;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <div class="container nav-container">
+      <a href="/" class="logo">HR Management</a>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/login" class="login-btn">Login</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="container">
+      <h1>HR Management System</h1>
+      <p>Streamline your HR operations with our modern and efficient management solution.</p>
+    </div>
+  </section>
+
+
+
+  <section class="features">
+    <a href="/job_listing">
+      <div class="feature-card">
+        <h3>Public Job Listings</h3>
+        <p>Browse current job openings and career opportunities.</p>
+      </div>
+    </a>
+    <a href="/interview_dates">
+      <div class="feature-card">
+        <h3>Interview Dates</h3>
+        <p>View shotlisted candidates' interview dates</p>
+      </div>
+    </a>
+
+    <a href="/department_list">
+      <div class="feature-card">
+        <h3>Departments</h3>
+        <p>View the departments in Pulchowk College.</p>
+      </div>
+    </a>
+
+    <a href="/position_list">
+      <div class="feature-card">
+        <h3>Positions</h3>
+        <p>Job positions and roles currently in Pulchowk Campus.</p>
+      </div>
+    </a>
+  </section>
+
+  </section>
+  </main>
+  <footer>
+    © 2024 Pulchowk Campus. All Rights Reserved.
+  </footer>
+</body>
+
+</html>

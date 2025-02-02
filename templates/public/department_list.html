@@ -1,0 +1,40 @@
+{% extends "./base_list.html" %}
+
+{% block title %}Positions List - HR Management System{% endblock %}
+
+{% block content %}
+<title>Departments List - HR Management System</title>
+
+<div class="header">
+  <h1>Departments</h1>
+</div>
+
+<div class="table-container">
+  {% if departments %}
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Department Name</th>
+        <th>Contact Number</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for department in departments %}
+      <tr>
+        <td>{{ department.department_id }}</td>
+        <td>{{ department.department_name }}</td>
+        <td>{{ department.contact_number }}</td>
+
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <h2>No Departments Found</h2>
+    <p>Get started by adding your first department</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

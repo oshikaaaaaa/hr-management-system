@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - Pokhara Campus</title>
+  <style>
+    :root {
+      --primary: #000000;
+      --primary-light: #333333;
+      --text: #1a1a1a;
+      --text-light: #666666;
+      --background: #f9f9f9;
+      --card-bg: #ffffff;
+      --border: #e0e0e0;
+      --hover: #f0f0f0;
+      --accent: #1a1a1a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      line-height: 1.6;
+      background-color: var(--background);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    nav {
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--border);
+      background-color: var(--card-bg);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-light);
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      position: relative;
+    }
+
+    .login-btn {
+      background-color: var(--primary);
+      color: white !important;
+      border-radius: 8px;
+      padding: 0.5rem 1rem !important;
+    }
+
+    .login-btn:hover {
+      background-color: var(--primary-light);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 50%;
+      background-color: var(--primary);
+      transition: all 0.2s ease;
+    }
+
+    .nav-links a:not(.login-btn):hover::after {
+      width: 100%;
+      left: 0;
+    }
+
+    .container {
+      width: 85%;
+      margin: auto;
+      overflow: hidden;
+      padding: 20px;
+    }
+
+    header {
+      background-color: var(--card-bg);
+      color: var(--primary);
+      text-align: center;
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+
+    header p {
+      color: var(--text-light);
+    }
+
+    .content {
+      background: var(--card-bg);
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border);
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    .section h2 {
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+
+    .key-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .info-card {
+      background-color: var(--background);
+      padding: 15px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+    }
+
+    .info-card h3 {
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .info-card p {
+      color: var(--text-light);
+    }
+
+    footer {
+      background-color: var(--primary);
+      color: white;
+      text-align: center;
+      padding: 10px;
+      position: relative;
+      bottom: 0;
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .nav-container {
+        flex-direction: column;
+        padding: 1rem 0;
+      }
+
+      .nav-links {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.5rem;
+      }
+
+      .nav-links a {
+        width: 100%;
+        text-align: center;
+        padding: 0.75rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <div class="container nav-container">
+      <a href="/" class="logo">HR Management</a>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/dashboard" class="login-btn">Login</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header>
+    <h1>Pokhara Campus</h1>
+    <p>Established in 1965, A Premier Institution of Higher Education</p>
+  </header>
+
+  <div class="container">
+    <div class="content">
+      <div class="section">
+        <h2>About Us</h2>
+        <p>Pokhara Campus, affiliated with Tribhuvan University, is a leading educational institution committed to
+          providing quality higher education in Nepal. Located in the scenic city of Pokhara, our campus has been
+          nurturing academic excellence and personal growth for decades.</p>
+      </div>
+
+      <div class="section">
+        <h2>Our Vision</h2>
+        <p>To be a center of academic excellence, promoting critical thinking, research, and holistic development of
+          students.</p>
+      </div>
+
+      <div class="key-info">
+        <div class="info-card">
+          <h3>Founding Year</h3>
+          <p>1965</p>
+        </div>
+        <div class="info-card">
+          <h3>Affiliated To</h3>
+          <p>Tribhuvan University</p>
+        </div>
+        <div class="info-card">
+          <h3>Location</h3>
+          <p>Pokhara, Kaski, Nepal</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Academic Offerings</h2>
+        <ul>
+          <li>Bachelor's Degree Programs</li>
+          <li>Master's Level Studies</li>
+          <li>Research Opportunities</li>
+          <li>Professional Development Courses</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    © 2024 Pokhara Campus. All Rights Reserved.
+  </footer>
+</body>
+
+</html>

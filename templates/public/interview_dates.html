@@ -1,0 +1,45 @@
+{% extends "./base_list.html" %}
+
+{% block title %}Interviews List - HR Management System{% endblock %}
+
+{% block content %}
+<div class="header">
+  <h1>Interviews</h1>
+</div>
+
+<div class="table-container">
+  {% if interviews %}
+  <table>
+    <thead>
+      <tr>
+
+        <th>Applicant</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Status</th>
+        <th>Interviewer</th>
+
+
+      </tr>
+    </thead>
+    <tbody>
+      {% for interview in interviews %}
+      <tr>
+        <td>{{ interview.applicant.name if interview.applicant else 'N/A' }}</td>
+        <td>{{ interview.interview_date }}</td>
+        <td>{{ interview.interview_time }}</td>
+        <td>{{ interview.interview_status.value }}</td>
+        <td>{{ interview.interviewer.name if interview.interviewer else 'Not Assigned' }}</td>
+
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <h2>No Interviews Found</h2>
+    <p>Get started by scheduling your first interview</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

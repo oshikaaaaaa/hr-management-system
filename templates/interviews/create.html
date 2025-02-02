@@ -1,0 +1,60 @@
+{% extends "./base_create.html" %}
+
+{% block title %}Schedule New Interview - HR Management System{% endblock %}
+
+{% block content %}
+<h1>Schedule New Interview</h1>
+
+<form action="/interviews/create" method="POST">
+  <div class="form-group">
+    <label for="applicant_id">Applicant</label>
+    <select id="applicant_id" name="applicant_id" required>
+      <option value="">Select an applicant</option>
+      {% for applicant in applicants %}
+      <option value="{{ applicant.applicant_id }}">{{ applicant.full_name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="interview_date">Interview Date</label>
+    <input type="date" id="interview_date" name="interview_date" required>
+  </div>
+
+  <div class="form-group">
+    <label for="interview_time">Interview Time</label>
+    <input type="time" id="interview_time" name="interview_time" required>
+  </div>
+
+  <div class="form-group">
+    <label for="interview_status">Status</label>
+    <select id="interview_status" name="interview_status" required>
+      <option value="Pending">Select status</option>
+      {% for status in interview_statuses %}
+      <option value="{{ status.value }}">{{ status.value }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="interviewed_by">Interviewer</label>
+    <select id="interviewed_by" name="interviewed_by" required>
+      <option value="">Select an interviewer</option>
+      {% for user in users %}
+      <option value="{{ user.user_id }}">{{ user.username }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="interview_notes">Interview Notes</label>
+    <textarea id="interview_notes" name="interview_notes" rows="4"></textarea>
+  </div>
+
+  <div class="form-actions">
+    <a href="/interviews" class="btn btn-secondary">Cancel</a>
+    <button type="submit" class="btn btn-primary">Schedule Interview</button>
+  </div>
+</form>
+
+{% endblock %}
