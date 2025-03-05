@@ -1,0 +1,63 @@
+{% extends "./base_list.html" %}
+
+{% block title %}Users List - HR Management System{% endblock %}
+
+{% block content %}
+<div class="header">
+  <h1>Users</h1>
+  <div class="button-group">
+    <a href="/users/add" class="btn btn-primary">Add New User</a>
+  </div>
+</div>
+
+{% if error %}
+<div style="background-color: #f8d7da; color: #721c24; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
+  {{ error }}
+</div>
+{% endif %}
+
+<div class="table-container">
+  {% if users %}
+  <table>
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Admin Status</th>
+        <th>Created At</th>
+        <th>Last Login</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td>{{ u.username }}</td>
+        <td>
+          <span class="employee-status status-{{ 'admin' if u.is_admin else 'regular' }}">
+            {{ 'Admin' if u.is_admin else 'Regular' }}
+          </span>
+        </td>
+        <td>{{ u.created_at.strftime('%Y-%m-%d') if u.created_at else 'N/A' }}</td>
+        <td>{{ u.last_login.strftime('%Y-%m-%d') if u.last_login else 'Never' }}</td>
+        <td class="actions">
+          {% if not u.is_admin or (u.is_admin and admin_count > 1) %}
+          <form action="/users/delete/{{ u.user_id }}" method="POST" style="display: inline;">
+            <button type="submit" class="btn btn-danger"
+              onclick="return confirm('Are you sure you want to delete this user?')">
+              Delete
+            </button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <h2>No Users Found</h2>
+    <p>Get started by adding your first user</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

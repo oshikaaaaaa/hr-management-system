@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, date,timedelta
 from typing import Optional
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
@@ -8,6 +8,7 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from models import User
 from base import SessionLocal
+
 
 # Security constants
 SECRET_KEY = "your-secret-key-here"  # Change this to a secure secret key
@@ -40,6 +41,43 @@ def get_db():
         yield db
     finally:
         db.close()
+        
+        
+def update_last_login(user, db):
+    """
+    Update last_login if it's None or older than 1 hour
+    Works with both datetime and date objects
+    """
+    current_datetime = datetime.utcnow().date()
+    
+    # If last_login is None, update it
+    if user.last_login is None:
+        user.last_login = current_datetime
+        db.commit()
+        return
+    
+    # Convert last_login to date if it's a datetime
+    last_login_date = user.last_login
+    if isinstance(last_login_date, datetime):
+        last_login_date = last_login_date.date()
+    
+    # Check if last login is older than 1 day
+    if (current_datetime - last_login_date).days >= 1:
+        user.last_login = current_datetime
+        db.commit()
+
+def authenticate_user(db: Session, username: str, password: str):
+    user = db.query(User).filter(User.username == username).first()
+    if not user:
+        return False
+    if not verify_password(password, user.password):
+        return False
+    
+    # Update last_login timestamp
+    user.last_login = datetime.utcnow()
+    db.commit()
+    
+    return user
 
 async def get_current_user(request: Request, db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
@@ -63,53 +101,16 @@ async def get_current_user(request: Request, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == username).first()
     if user is None:
         raise credentials_exception
+    
+    # Update last login if needed
+    current_date = date.today()
+    if user.last_login is None or user.last_login < current_date:
+        user.last_login = current_date
+        db.commit()
+    
     return user
 
-# Middleware for protecting routes
-# auth.py (updating only the middleware part)
-# async def auth_middleware(request, call_next):
-#     # Define public and private paths
-#     public_paths = {"/login", "/", "/about", "/contact", 
-#                    "/department_list", "/interview_dates", 
-#                    "/job_listing", "/position_list", "/logout"}
-    
-#     private_paths = {"/dashboard", "/employees", "/departments", 
-#                     "/leaves", "/positions", "/vacancies", 
-#                     "/applicants", "/interviews", "/payments"}
-    
-#     # current_path = request.url.path.rstrip('/')
-#     current_path = request.url.path.rstrip('/')
 
-    
-#     # Allow static files
-#     if current_path.startswith("/static"):
-#         response = await call_next(request)
-#         return response
-        
-#     # Check if path is private
-#     is_private = any(current_path.startswith(path) for path in private_paths)
-#     if is_private:
-#         try:
-#             token = request.cookies.get("access_token")
-#             if not token:
-#                 # Redirect to login if no token
-#                 from fastapi.responses import RedirectResponse
-#                 return RedirectResponse(url="/login", status_code=302)
-            
-#             # Verify token
-#             try:
-#                 payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-#                 username = payload.get("sub")
-#                 if username is None:
-#                     return RedirectResponse(url="/login", status_code=302)
-#             except JWTError:
-#                 return RedirectResponse(url="/login", status_code=302)
-                
-#         except Exception:
-#             return RedirectResponse(url="/login", status_code=302)
-    
-#     response = await call_next(request)
-#     return response
 
 # auth.py
 async def auth_middleware(request, call_next):

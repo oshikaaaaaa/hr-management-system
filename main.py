@@ -33,6 +33,7 @@ from routes.private import (
     interview_routes,
     payment_routes,
     dashboard_routes,
+    user_routes
     
 )
 
@@ -109,6 +110,11 @@ app.include_router(
 )
 app.include_router(
     payment_routes.router,
+    dependencies=[Depends(get_current_user)]
+)
+
+app.include_router(
+    user_routes.router,
     dependencies=[Depends(get_current_user)]
 )
 
