@@ -101,7 +101,7 @@ async def add_user(
             }
         )
 
-@router.get("/users/delete/{user_id}")
+@router.post("/users/delete/{user_id}")
 async def delete_user(
     request: Request,
     user_id: int,

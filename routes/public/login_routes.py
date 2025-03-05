@@ -1,11 +1,13 @@
-# routes/public/login_routes.py
 from fastapi import APIRouter, Request, Response, Depends, HTTPException, status, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from auth import verify_password, create_access_token, get_db
 from models import User
-from datetime import timedelta
+from datetime import date,timedelta
+
+# Assuming you've imported the update_last_login function
+from auth import update_last_login
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -23,11 +25,17 @@ async def login(
 ):
     user = db.query(User).filter(User.username == username).first()
     if not user or not verify_password(password, user.password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
+        return templates.TemplateResponse(
+            "auth/login.html", 
+            {
+                "request": response, 
+                "error": "Incorrect username or password"
+            }
         )
+
+    # Update last login
+    user.last_login = date.today()
+    db.commit()
 
     # Create access token
     access_token = create_access_token(
