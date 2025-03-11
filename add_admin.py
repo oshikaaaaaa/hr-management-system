@@ -1,13 +1,13 @@
 from models import User
 from base import SessionLocal
-from auth1 import get_password_hash
+from auth import get_password_hash
 import datetime
-
+#pseudo
 def create_initial_user():
     db = SessionLocal()
     try:
         # Check if admin already exists
-        existing_admin = db.query(User).filter(User.username == "admin").first()
+        existing_admin = db.query(User).filter(User.username == "admin1").first()
         if existing_admin:
             print("Admin user already exists")
             return
@@ -16,8 +16,7 @@ def create_initial_user():
             username="admin1",
             password=get_password_hash("pass"),
             is_admin=True,
-            role="admin",  # Add role if your User model has this field
-            created_at=datetime.datetime.utcnow(),
+            created_at=datetime.datetime.now(),
             last_login=None
         )
         
