@@ -2,7 +2,7 @@ from models import User
 from base import SessionLocal
 from auth import get_password_hash
 import datetime
-
+#pseudo
 def create_initial_user():
     db = SessionLocal()
     try:
