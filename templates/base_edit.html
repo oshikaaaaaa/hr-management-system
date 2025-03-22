@@ -1,6 +1,7 @@
 <!-- templates/base_edit.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -50,7 +51,8 @@
             font-weight: bold;
         }
 
-        input, select {
+        input,
+        select {
             width: 100%;
             padding: 10px;
             border: 1px solid #dce4ec;
@@ -58,7 +60,8 @@
             font-size: 16px;
         }
 
-        input:focus, select:focus {
+        input:focus,
+        select:focus {
             outline: none;
             border-color: #01090e;
             box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
@@ -112,9 +115,11 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         {% block content %}{% endblock %}
     </div>
 </body>
+
 </html>
