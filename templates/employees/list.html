@@ -43,102 +43,118 @@
             <a href="/employees/create" class="btn btn-primary">Add New Employee</a>
             <a href="/leaves" class="btn btn-secondary">View Leave Requests</a>
         </div>
-    </div>
-
-    <form method="GET" action="/employees" id="filter-form" class="filter-form">
-        {% if request.query_params.get('search') %}
-        <input type="hidden" name="search" value="{{ request.query_params.get('search', '') }}">
-        {% endif %}
-
-        {% if request.query_params.get('search_field') %}
-        <input type="hidden" name="search_field" value="{{ request.query_params.get('search_field', '') }}">
-        {% endif %}
-
-        <div class="filter-option">
-            <label for="department_id">Department:</label>
-            <select name="department_id" id="department_id" onchange="this.form.submit()">
-                <option value="">All Departments</option>
-                {% for dept in departments %}
-                <option value="{{ dept.department_id }}" {% if
-                    request.query_params.get('department_id')|string==dept.department_id|string %}selected{% endif %}>
-                    {{ dept.department_name }}
-                </option>
-                {% endfor %}
-            </select>
         </div>
-
-        <div class="filter-option">
-            <label for="position_id">Position:</label>
-            <select name="position_id" id="position_id" onchange="this.form.submit()">
-                <option value="">All Positions</option>
-                {% for pos in positions %}
-                <option value="{{ pos.position_id }}" {% if
-                    request.query_params.get('position_id')|string==pos.position_id|string %}selected{% endif %}>
-                    {{ pos.title }}
-                </option>
-                {% endfor %}
-            </select>
+        
+        <form method="GET" action="/employees" id="filter-form" class="filter-form">
+            {% if request.query_params.get('search') %}
+            <input type="hidden" name="search" value="{{ request.query_params.get('search', '') }}">
+            {% endif %}
+        
+            {% if request.query_params.get('search_field') %}
+            <input type="hidden" name="search_field" value="{{ request.query_params.get('search_field', '') }}">
+            {% endif %}
+        
+            <div class="filter-option">
+                <label for="department_id">Department:</label>
+                <select name="department_id" id="department_id" onchange="this.form.submit()">
+                    <option value="">All Departments</option>
+                    {% for dept in departments %}
+                    <option value="{{ dept.department_id }}" {% if
+                        request.query_params.get('department_id')|string==dept.department_id|string %}selected{% endif %}>
+                        {{ dept.department_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        
+            <div class="filter-option">
+                <label for="position_id">Position:</label>
+                <select name="position_id" id="position_id" onchange="this.form.submit()">
+                    <option value="">All Positions</option>
+                    {% for pos in positions %}
+                    <option value="{{ pos.position_id }}" {% if
+                        request.query_params.get('position_id')|string==pos.position_id|string %}selected{% endif %}>
+                        {{ pos.title }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        
+            <!-- New salary range filters -->
+            <div class="filter-option">
+                <label for="min_salary">Min Salary:</label>
+                <input type="number" name="min_salary" id="min_salary" value="{{ request.query_params.get('min_salary', '') }}" 
+                       placeholder="Min" step="0.01" min="0">
+            </div>
+        
+            <div class="filter-option">
+                <label for="max_salary">Max Salary:</label>
+                <input type="number" name="max_salary" id="max_salary" value="{{ request.query_params.get('max_salary', '') }}" 
+                       placeholder="Max" step="0.01" min="0">
+            </div>
+        
+            <button type="submit" class="btn btn-primary">Apply Filters</button>
+            <a href="/employees" class="btn btn-secondary">Clear Filters</a>
+        </form>
+        
+        <div class="employee-count">
+            <span>Total Employees: <strong>{{ employee_count }}</strong></span>
         </div>
-
-        <a href="/employees" class="btn btn-secondary">Clear Filters</a>
-    </form>
-
-    <div class="employee-count">
-        <span>Total Employees: <strong>{{ employee_count }}</strong></span>
-    </div>
-
-    <div class="table-container">
-        {% if employees %}
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Position Type</th>
-                    <th>Department</th>
-                    <th>Hire Date</th>
-                    <th>Status</th>
-                    <th>Position</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for employee in employees %}
-                <tr>
-                    <td>{{ employee.employee_id }}</td>
-                    <td>{{ employee.first_name }} {{ employee.last_name }}</td>
-                    <td>{{ employee.position_type.name }}</td>
-                    <td>{{ employee.department.department_name }}</td>
-                    <td>{{ employee.hire_date.strftime('%Y-%m-%d') }}</td>
-                    <td>
-                        <span class="employee-status status-{{ employee.employment_status.name.lower() }}">
-                            {{ employee.employment_status.name }}
-                        </span>
-                    </td>
-                    <td>{{ employee.position.title }}</td>
-                    <td class="actions">
-                        <a href="/employees/{{ employee.employee_id }}" class="btn btn-primary">View</a>
-                        <a href="/employees/{{ employee.employee_id }}/edit" class="btn btn-warning">Edit</a>
-                        <form action="/employees/{{ employee.employee_id }}/delete" method="POST"
-                            style="display: inline;">
-                            <button type="submit" class="btn btn-danger"
-                                onclick="return confirm('Are you sure you want to delete this employee?')">
-                                Delete
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <div class="empty-state">
-            <h2>No Employees Found</h2>
-            <p>Get started by adding your first employee</p>
+        
+        <div class="table-container">
+            {% if employees %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Position Type</th>
+                        <th>Department</th>
+                        <th>Hire Date</th>
+                        <th>Status</th>
+                        <th>Position</th>
+                        <th>Actions</th>
+                        <th>Salary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for employee in employees %}
+                    <tr>
+                        <td>{{ employee.employee_id }}</td>
+                        <td>{{ employee.first_name }} {{ employee.last_name }}</td>
+                        <td>{{ employee.position_type.name }}</td>
+                        <td>{{ employee.department.department_name }}</td>
+                        <td>{{ employee.hire_date.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            <span class="employee-status status-{{ employee.employment_status.name.lower() }}">
+                                {{ employee.employment_status.name }}
+                            </span>
+                        </td>
+                        <td>{{ employee.position.title }}</td>
+                        <td class="actions">
+                            <a href="/employees/{{ employee.employee_id }}" class="btn btn-primary">View</a>
+                            <a href="/employees/{{ employee.employee_id }}/edit" class="btn btn-warning">Edit</a>
+                            <form action="/employees/{{ employee.employee_id }}/delete" method="POST"
+                                style="display: inline;">
+                                <button type="submit" class="btn btn-danger"
+                                    onclick="return confirm('Are you sure you want to delete this employee?')">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                        <td>{{ employee.salary }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <h2>No Employees Found</h2>
+                <p>Get started by adding your first employee</p>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
-    </div>
-</div>
+        </div>
 
 <style>
     .content-container {

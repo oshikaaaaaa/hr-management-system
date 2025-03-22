@@ -28,11 +28,13 @@ def get_db():
 
 @router.get("/", response_class=HTMLResponse)
 async def list_employees(
-    request: Request, 
+    request: Request,
     search: Optional[str] = None,
-    search_field: Optional[str] = None,  # Add this parameter
+    search_field: Optional[str] = None,
     department_id: Optional[str] = None,
     position_id: Optional[str] = None,
+    min_salary: Optional[float] = None,  # Add min salary parameter
+    max_salary: Optional[float] = None,  # Add max salary parameter
     db: Session = Depends(get_db)
 ):
     # Start with a base query
@@ -60,6 +62,21 @@ async def list_employees(
         elif search_field == "position":
             query = query.join(Position).filter(Position.title.ilike(search_term))
     
+    # Apply salary range filter if provided
+    if min_salary is not None:
+        try:
+            min_salary_float = float(min_salary)
+            query = query.filter(Employee.salary >= min_salary_float)
+        except ValueError:
+            pass  # Ignore invalid inputs
+            
+    if max_salary is not None:
+        try:
+            max_salary_float = float(max_salary)
+            query = query.filter(Employee.salary <= max_salary_float)
+        except ValueError:
+            pass  # Ignore invalid inputs
+    
     # Apply department filter if department is selected
     if department_id and department_id.isdigit():
         query = query.filter(Employee.department_id == int(department_id))
@@ -81,13 +98,15 @@ async def list_employees(
     return templates.TemplateResponse(
         "employees/list.html",
         {
-            "request": request, 
+            "request": request,
             "employees": employees,
             "departments": departments,
             "positions": positions,
             "employee_count": employee_count,
             "search": search,
-            "search_field": search_field
+            "search_field": search_field,
+            "min_salary": min_salary,  # Pass min_salary to template
+            "max_salary": max_salary   # Pass max_salary to template
         }
     )
 

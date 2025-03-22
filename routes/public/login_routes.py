@@ -19,6 +19,8 @@ async def login_page(request: Request):
 @router.post("/login")
 async def login(
     response: Response,
+    request:Request,
+    
     username: str = Form(...),
     password: str = Form(...),
     db: Session = Depends(get_db)
@@ -28,7 +30,7 @@ async def login(
         return templates.TemplateResponse(
             "auth/login.html", 
             {
-                "request": response, 
+                "request": request, 
                 "error": "Incorrect username or password"
             }
         )
@@ -44,8 +46,8 @@ async def login(
     )
     
     # Set cookie with token
-    response = RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND)
-    response.set_cookie(
+    redirect_response = RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND)
+    redirect_response.set_cookie(
         key="access_token",
         value=access_token,
         httponly=True,
@@ -53,7 +55,7 @@ async def login(
         expires=1800,
     )
     
-    return response
+    return redirect_response
 
 @router.get("/logout")
 async def logout(response: Response):
