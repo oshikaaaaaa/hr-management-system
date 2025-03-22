@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -100,20 +101,49 @@
             transition: background-color 0.3s;
         }
 
-        .btn-primary { background-color: #01090e; color: white; }
-        .btn-primary:hover { background-color: #020304; }
-        .btn-warning { background-color: #494842; color: white; }
-        .btn-warning:hover { background-color: #f39c12; }
-        .btn-danger { background-color: #e74c3c; color: white; }
-        .btn-danger:hover { background-color: #c0392b; }
-        .btn-secondary { background-color: #95a5a6; color: white; }
-        .btn-secondary:hover { background-color: #7f8c8d; }
+        .btn-primary {
+            background-color: #01090e;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #020304;
+        }
+
+        .btn-warning {
+            background-color: #494842;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: #f39c12;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
+
 <body>
     <div class="container">
         {% block content %}{% endblock %}
     </div>
 </body>
+
 </html>
